@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<meta name="keywords" content="Flat Dark Web Login Form Responsive Templates, Iphone Widget Template, Smartphone login forms,Login form, Widget Template, Responsive Templates, a Ipad 404 Templates, Flat Responsive Templates" />
+<link href="/static/css/login.css" rel='stylesheet' type='text/css' />
+<!--webfonts-->
+{#<link href='http://fonts.useso.com/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>#}
+{#<link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>#}
+<!--//webfonts-->
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<style>
+    .switch-div{
+        height: 35px;
+        color: green;
+        font-size: 20px;
+        line-height: 35px;
+        font-weight: bold;
+        text-align: center;
+        border:2px black solid;
+    }
+    .form2{
+        display: none;
+    }
+    .detail-div{
+        color: #fff;
+        margin-bottom:-36px;
+        text-align:center;
+    }
+</style>
+<body>
+<script>
+
+	$(document).ready(function(c) {
+		$('.close').on('click', function(c){
+			$('.login-form').fadeOut('slow', function(c){
+				$('.login-form').remove();
+			});
+		});
+
+        var $switch = $(".switch-div");
+        var $form1 = $(".form1");
+        var $form2 = $(".form2");
+
+		$switch.click(function(){
+		    $form1.toggle();
+		    $form2.toggle();
+            toggle_button();
+        });
+
+		function toggle_button(){
+		    if($switch.text() == "切换：注册"){
+		        $switch.text("切换：登陆")
+            }else{
+                $switch.text("切换：注册");
+            }
+        }
+	});
+
+</script>
+<!--SIGN UP-->
+<div class="switch-div">切换：注册</div>
+
+<h1>homework submission system</h1>
+<div class="login-form">
+	<div class="close"> </div>
+	<div class="head-info">
+		<label class="lbl-1"> </label>
+		<label class="lbl-2"> </label>
+		<label class="lbl-3"> </label>
+	</div>
+	<div class="clear"> </div>
+	<div class="avtar">
+		<img src="/static/media/avatar.jpg" />
+	</div>
+
+    <div class="detail-div">{{ detail }}</div>
+
+    <form action="/uauth/login/" method="post" class="form1">
+        {% csrf_token %}
+		<input type="text" class="text" value="usename" name="username" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '???';}" >
+		<div class="key">
+			<input type="password" value="Password"  name="password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Password';}">
+		</div>
+        <div class="signin">
+			<input type="submit" value="Login" >
+		</div>
+	</form>
+
+    <form action="/uauth/register/" method="post" class="form2">
+        {% csrf_token %}
+        <input type="text" class="text" value="usename" name="username" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '???';}" >
+        <div class="key">
+            <input type="password" value="Password"  name="password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Password';}">
+        </div>
+        <div class="signin">
+            <input type="submit" value="register" >
+        </div>
+	</form>
+    
+</div>
+</body>
+</html>
