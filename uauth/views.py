@@ -4,12 +4,13 @@ from django.contrib.auth import logout, login, authenticate
 from django.db import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from rest_framework.decorators import api_view, permission_classes
 import re
 
 from uauth.models import UserInfo
-from utils.uauth import create_user
+from utils.uauth import create_user, send_email
 
 
 # 登陆
@@ -57,6 +58,22 @@ def log_out(request):
 @login_required(login_url="/uauth/login")
 def index(request):
     return render(request, "uauth/index.html")
+
+
+# 测试发送邮件
+# @api_view(["POST"])
+# def test_send_email(request):
+#     to_email = request.data.get("to_email", "")
+#     subject = request.data.get("subject", "")
+#     message = request.data.get("message", "")
+#     html_message = request.data.get("html_message", "")
+#
+#     print(to_email, subject, message)
+#
+#     if to_email:
+#         ret = send_email(to_email=to_email, subject=subject, message=message, html_message=html_message)
+#         return JsonResponse({"detail": str(ret)})
+#     return JsonResponse({"detail": "to_email is None."})
 
 
 

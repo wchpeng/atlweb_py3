@@ -131,6 +131,7 @@ DATE_FORMAT = 'Y-m-d H:i:s'
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/my_project/static'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # 配置media
@@ -151,3 +152,11 @@ REST_FRAMEWORK = {
     #     'codepost_limit': '6/hour',
     # }
 }
+
+# 配置邮箱
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'smartwu_sir@163.com'
+EMAIL_HOST_PASSWORD = 'woshi006'
+EMAIL_FROM = '猴赛雷<smartwu_sir@163.com>'
