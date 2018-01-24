@@ -7,10 +7,14 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework import mixins, generics, permissions, viewsets
+from rest_framework.response import Response
 import re
 
 from uauth.models import UserInfo
 from uauth.tasks import send_email
+from uauth.permissions import IsOwnerRetrieveUpdate
+from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
 from utils.uauth import create_user
 
 
@@ -75,6 +79,30 @@ def test_send_email(request):
         ret = send_email.delay(to_email=to_email, subject=subject, message=message, html_message=html_message)
         return JsonResponse({"detail": str(ret)})
     return JsonResponse({"detail": "to_email is None."})
+
+
+# 用户详情
+class UserInfoDetail(generics.RetrieveUpdateAPIView, viewsets.GenericViewSet):
+    queryset = UserInfo.objects.all()
+    permission_classes = (permissions.IsAuthenticated, IsOwnerRetrieveUpdate)
+    serializer_class = UserInfoDetailSerializer
+
+
+# 用户列表
+class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = UserInfo.objects.all()
+    serializer_class = UserInfoRetrieveSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
+        return Response(serializer.data)
 
 
 
