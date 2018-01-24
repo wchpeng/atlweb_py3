@@ -10,7 +10,8 @@ from rest_framework.decorators import api_view, permission_classes
 import re
 
 from uauth.models import UserInfo
-from utils.uauth import create_user, send_email
+from uauth.tasks import send_email
+from utils.uauth import create_user
 
 
 # 登陆
@@ -61,19 +62,19 @@ def index(request):
 
 
 # 测试发送邮件
-# @api_view(["POST"])
-# def test_send_email(request):
-#     to_email = request.data.get("to_email", "")
-#     subject = request.data.get("subject", "")
-#     message = request.data.get("message", "")
-#     html_message = request.data.get("html_message", "")
-#
-#     print(to_email, subject, message)
-#
-#     if to_email:
-#         ret = send_email(to_email=to_email, subject=subject, message=message, html_message=html_message)
-#         return JsonResponse({"detail": str(ret)})
-#     return JsonResponse({"detail": "to_email is None."})
+@api_view(["POST"])
+def test_send_email(request):
+    to_email = request.data.get("to_email", "")
+    subject = request.data.get("subject", "")
+    message = request.data.get("message", "")
+    html_message = request.data.get("html_message", "")
+
+    print(to_email, subject, message)
+
+    if to_email:
+        ret = send_email.delay(to_email=to_email, subject=subject, message=message, html_message=html_message)
+        return JsonResponse({"detail": str(ret)})
+    return JsonResponse({"detail": "to_email is None."})
 
 
 

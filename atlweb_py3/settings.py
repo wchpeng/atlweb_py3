@@ -26,6 +26,9 @@ SECRET_KEY = '$yte#tv%#mpqk08=u=+%w+g4epuzw&o4v59vg2sw#dmeitjr5d'
 DEBUG = True
 
 ALLOWED_HOSTS = ["180.76.186.192", "127.0.0.1"]
+ADMINS = (
+    ("myself", "869858978@qq.com"),
+)
 
 
 # Application definition

@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^login/$', views.log_in),
     url(r'^logout/$', views.log_out),
     url(r'^register/$', views.register),
-    # url(r'send-email/$', views.test_send_email),
+    url(r'send-email/$', views.test_send_email),
 ]
