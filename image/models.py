@@ -1,8 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 from db.base_model import BaseModel
-from utils.image import picture_upload_path
+from utils.image_utils import picture_upload_path
 
 
 class Picture(BaseModel):

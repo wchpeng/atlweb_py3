@@ -1,4 +1,4 @@
-from utils.uauth import get_user_hash
+from utils.uauth_utils import get_user_hash
 
 
 def picture_upload_path(instance, filename):

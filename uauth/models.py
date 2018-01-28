@@ -1,8 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models, transaction
+from rest_framework.authtoken.models import Token
 
 from db.base_model import BaseModel
-from utils.uauth import avatar_upload_path
+from utils.uauth_utils import avatar_upload_path, get_user_hash
 
 
 class UserInfo(BaseModel):
@@ -24,3 +25,15 @@ class UserInfo(BaseModel):
 
     class Meta:
         ordering = ("-id",)
+
+
+def create_user(**kwargs):
+    with transaction.atomic():
+        user = User.objects.create_user(**kwargs)
+        Token.objects.create(user=user)
+        UserInfo.objects.create(
+            user=user,
+            username=kwargs["username"],
+            user_hash=get_user_hash(user.id)
+        )
+    return user

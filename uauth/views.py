@@ -1,21 +1,20 @@
+import re
+
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework import mixins, generics, permissions, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import re
 
-from uauth.models import UserInfo
-from uauth.tasks import send_email
+from uauth.models import UserInfo, create_user
 from uauth.permissions import IsOwnerRetrieveUpdate
 from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
-from utils.uauth import create_user
+from uauth.tasks import send_email
 
 
 # 登陆
@@ -103,8 +102,3 @@ class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
-
-
-
-
-
