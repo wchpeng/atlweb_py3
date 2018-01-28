@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'uauth',
+    'image',
 ]
 
 MIDDLEWARE = [
@@ -139,8 +140,9 @@ STATIC_ROOT = '/var/www/my_project/static'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # 配置media
-MEDIA_URL = '/static/media/'
-MEDIA_ROOT = (os.path.join(BASE_DIR, 'static/media'),)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIAFILE_DIRS = (os.path.join(BASE_DIR, 'media'))
 
 # 配置rest-framework
 REST_FRAMEWORK = {

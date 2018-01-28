@@ -21,6 +21,7 @@ from django.views.static import serve
 from .settings import MEDIA_ROOT
 
 urlpatterns = [
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT,'show_indexes':True}),
     url(r'^api-auth/', include('rest_framework.urls', namespace="rest_framework")),
     path('admin/', admin.site.urls),
     path('uauth/', include('uauth.urls')),

@@ -1,16 +1,15 @@
 from uauth.models import UserInfo
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.db import transaction
 from rest_framework.authtoken.models import Token
 import hashlib
+import time
 
-from atlweb_py3.settings import EMAIL_HOST_USER
 
-
+# 加密
 def get_user_hash(val):
     sha1 = hashlib.sha1()
-    sha1.update(str(val).encode())
+    sha1.update((str(val)+str(time.time())).encode())
     return sha1.hexdigest()
 
 
@@ -26,5 +25,7 @@ def create_user(**kwargs):
     return user
 
 
-
+def avatar_upload_path(instance, filename):
+    suffix = filename[filename.rfind("."):]
+    return "{}/{}{}".format(instance.userinfo.user_hash, get_user_hash(filename), suffix)
 

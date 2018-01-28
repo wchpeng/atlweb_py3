@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from db.base_model import BaseModel
+from utils.uauth import avatar_upload_path
 
 
 class UserInfo(BaseModel):
@@ -14,7 +15,9 @@ class UserInfo(BaseModel):
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name="地址")
     signature = models.CharField(max_length=50, null=True, blank=True, verbose_name="签名")
     username = models.CharField(max_length=12, null=True, blank=True, verbose_name="用户名")
-    avatar = models.ImageField(upload_to="avatar", default="default_avatar.png", verbose_name="头像")
+    avatar = models.ImageField(upload_to=avatar_upload_path, default="default_avatar.png", verbose_name="头像")
+
+    latest_albums = models.CharField(max_length=16, default="我的相册", verbose_name="最近操作的albums")
 
     def __str__(self):
         return "{} {}".format(self.id, self.username)
