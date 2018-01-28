@@ -1,20 +1,20 @@
 import re
 
 from django.contrib import messages
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout, login, authenticate
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from rest_framework import mixins, generics, permissions, viewsets
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import mixins, generics, permissions, viewsets
 
-from uauth.models import UserInfo, create_user
-from uauth.permissions import IsOwnerRetrieveUpdate
-from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
 from uauth.tasks import send_email
+from uauth.models import UserInfo, create_user
+from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
+from utils.permissions import IsOwnerRetrieveUpdate
 
 
 # 登陆

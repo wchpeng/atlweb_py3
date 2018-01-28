@@ -11,6 +11,7 @@ class UserInfo(BaseModel):
     gender = models.BooleanField(default=1, verbose_name="性别")
     user_hash = models.CharField(max_length=40, verbose_name="唯一标示")
     birthday = models.DateTimeField(verbose_name="生日", null=True, blank=True)
+    email = models.EmailField(verbose_name="邮箱")
     mark = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="评分")
     mobile = models.CharField(max_length=11, null=True, blank=True, verbose_name="电话")
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name="地址")
