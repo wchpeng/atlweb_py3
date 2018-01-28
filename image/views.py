@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import permissions, mixins, generics, viewsets, filters
+from rest_framework.response import Response
 from django_filters import rest_framework
 
 from image.models import Picture, Album
@@ -22,6 +23,15 @@ class AlbumDetailViews(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Album.objects.filter(visible=True)
     serializer_class = AlbumDetailSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # 保存latest_album
+        if request.user.id == instance.user.id:
+            request.user.latest_album = instance.name
+            request.user.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 # album update 图册修改
