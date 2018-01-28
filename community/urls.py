@@ -2,7 +2,6 @@ from rest_framework import routers
 
 from community import views
 
-
 router = routers.SimpleRouter()
 router.register(r"mod-reply", views.ReplyUpdateView)
 router.register(r"replies", views.ReplyListCreateDetailView)

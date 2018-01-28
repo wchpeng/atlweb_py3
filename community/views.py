@@ -4,15 +4,8 @@ from django_filters import rest_framework
 
 from community import serializers
 from community import models
+from utils.pagination import MyPagination
 from utils.permissions import IsOwnerRetrieveUpdate, IsOwnerOrTopLevelUpdate
-
-
-class ReviewPagination(pagination.PageNumberPagination):
-    """分页类"""
-    page_size = 16
-    max_page_size = 50
-    page_query_param = "page"
-    page_size_query_param = "page_size"
 
 
 # update 这里是逻辑删除review
@@ -36,7 +29,7 @@ class ReviewListView(mixins.ListModelMixin, viewsets.GenericViewSet):
     filter_backends = (rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ("user", "album")
     ordering_fields = ("add_date", "id")
-    pagination_class = ReviewPagination
+    pagination_class = MyPagination
 
 
 # list/retrieve/create reply

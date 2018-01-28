@@ -17,14 +17,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
 from django.views.static import serve
+from rest_framework.schemas import get_schema_view
+from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
 from .settings import MEDIA_ROOT
 
+schema_view = get_schema_view(title="api docs", renderer_classes=(SwaggerUIRenderer, OpenAPIRenderer))
+
 urlpatterns = [
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT,'show_indexes':True}),
+    url(r'^docs/$', schema_view, name="docs"),
     url(r'^api-auth/', include('rest_framework.urls', namespace="rest_framework")),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT,'show_indexes':True}),
     path('admin/', admin.site.urls),
     path('uauth/', include('uauth.urls')),
+    path('image/', include('image.urls')),
     path('mainapp/', include('mainapp.urls')),
     path('community/', include('community.urls')),
 ]

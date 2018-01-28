@@ -9,20 +9,13 @@ from utils.permissions import IsOwnerRetrieveUpdate
 
 
 # album list 显示
-class AlbumListViews(mixins.ListModelMixin, viewsets.GenericViewSet):
+class AlbumListView(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Album.objects.filter(visible=True).order_by("add_date")
     serializer_class = AlbumListSerializer
     filter_backends = (rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ("user",)
     ordering_fields = ("add_date", )
     search_fields = ("brief", "name")
-
-
-# album detail 图册详情
-class AlbumDetailViews(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = Album.objects.filter(visible=True)
-    serializer_class = AlbumDetailSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -35,7 +28,7 @@ class AlbumDetailViews(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 
 # album update 图册修改
-class AlbumModViews(viewsets.ModelViewSet):
+class AlbumModView(viewsets.ModelViewSet):
     queryset = Album.objects.filter(visible=True)
     serializer_class = AlbumDetailSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwnerRetrieveUpdate)

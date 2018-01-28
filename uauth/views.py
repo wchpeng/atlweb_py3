@@ -94,11 +94,9 @@ class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-
         serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
