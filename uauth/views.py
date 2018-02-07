@@ -1,4 +1,5 @@
 import re
+import json
 
 from django.contrib import messages
 from django.db import IntegrityError
@@ -28,6 +29,7 @@ def log_in(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
+            # request.session.set_expiry(300)
             messages.info(request, "登陆")
             return redirect(index)
         return render(request, "uauth/login.html", {"detail": "账号或密码错误"})
@@ -47,11 +49,13 @@ def register(request):
         except IntegrityError:
             return JsonResponse({"detail": "用户名已存在"})
         login(request, user)
+        request.session.set_expiry(300)
         messages.info(request, "注册")
         return redirect(index)
     return JsonResponse({"detail": "用户名或者密码不能为空"})
 
 
+# 登出
 @login_required(login_url="/uauth/login/")
 @require_GET
 def log_out(request):
@@ -61,6 +65,7 @@ def log_out(request):
 
 @login_required(login_url="/uauth/login")
 def index(request):
+    # print(request.session["_auth_user_id"])
     return render(request, "uauth/index.html")
 
 
@@ -100,3 +105,32 @@ class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
+
+
+# 注册环信
+@api_view(["GET"])
+def register_huanxin_user(request):
+    from huanxin.my_friends import Friends
+    from huanxin.get_token import Token
+    token = Token().get_token()
+    f = Friends(token)
+    us = UserInfo.objects.all()
+    data_list = []
+    for u in us:
+        res = f.register_user(username=u.username, password="123", nick_name=u.username)
+        print(res)
+        data_list.append(res)
+    return Response(data_list)
+
+
+# 注册环信
+@api_view(["GET"])
+def get_huanxin_user_status(request):
+    username = request.GET.get("username")
+    from huanxin.messages import Message
+    from huanxin.get_token import Token
+    token = Token().get_token()
+    print(token)
+    m = Message(access_token=token, msg="a", target="a")
+    res = m.get_user_status(username)
+    return Response(res)

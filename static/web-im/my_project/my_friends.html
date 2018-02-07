@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="../demo/javascript/dist/webim.config.js"></script>
+    <script src="../sdk/dist/strophe-1.2.8.min.js"></script>
+    <script src="../sdk/dist/websdk-1.4.13.js">
+        WebIM.Emoji = {
+            path: 'demo/images/faces/'  /*表情包路径*/
+                , map: {
+                    '[):]': 'ee_1.png',
+                    '[:D]': 'ee_2.png',
+                    '[;)]': 'ee_3.png',
+                    '[:-o]': 'ee_4.png',
+                    '[:p]': 'ee_5.png'
+                }
+            };
+    </script>
+    <script>
+        var $friends = $("#my-friends")
+        var $single_friends = $("#my-single-friends")
+        var $blacks = $("#my-blacks")
+
+        var conn = new WebIM.connection({
+            isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
+            https: typeof WebIM.config.https === 'boolean' ? WebIM.config.https : location.protocol === 'https:',
+            url: WebIM.config.xmppURL,
+            heartBeatWait: WebIM.config.heartBeatWait,
+            autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
+            autoReconnectInterval: WebIM.config.autoReconnectInterval,
+            apiUrl: WebIM.config.apiURL,
+            isAutoLogin: true
+        });
+
+        // 获取token，并放到cookie中
+        var options = {
+            apiUrl: WebIM.config.apiURL,
+            user: 'username',
+            pwd: 'password',
+            appKey: WebIM.config.appkey,
+            success: function (token) {
+                var token = token.access_token;
+                WebIM.utils.setCookie('webim_' + encryptUsername, token, 1);
+            },
+            error: function(){
+            }
+        };
+        conn.open(options);
+
+        // 使用token登录
+        var options = {
+            apiUrl: WebIM.config.apiURL,
+            user: 'username',
+            accessToken: 'token',
+            appKey: WebIM.config.appkey
+        };
+        conn.open(options);
+
+        conn.listen({
+            onOpened: function ( message ) {          //连接成功回调
+                // 如果isAutoLogin设置为false，那么必须手动设置上线，否则无法收消息
+                // 手动上线指的是调用conn.setPresence(); 如果conn初始化时已将isAutoLogin设置为true
+                // 则无需调用conn.setPresence();             
+            },  
+            onClosed: function ( message ) {},         //连接关闭回调
+            onTextMessage: function ( message ) {},    //收到文本消息
+            onEmojiMessage: function ( message ) {},   //收到表情消息
+            onPictureMessage: function ( message ) {}, //收到图片消息
+            onCmdMessage: function ( message ) {},     //收到命令消息
+            onAudioMessage: function ( message ) {},   //收到音频消息
+            onLocationMessage: function ( message ) {},//收到位置消息
+            onFileMessage: function ( message ) {},    //收到文件消息
+            onVideoMessage: function (message) {
+                var node = document.getElementById('privateVideo');
+                var option = {
+                    url: message.url,
+                    headers: {
+                    'Accept': 'audio/mp4'
+                    },
+                    onFileDownloadComplete: function (response) {
+                        var objectURL = WebIM.utils.parseDownloadResponse.call(conn, response);
+                        node.src = objectURL;
+                    },
+                    onFileDownloadError: function () {
+                        console.log('File down load error.')
+                    }
+                };
+                WebIM.utils.download.call(conn, option);
+            },   //收到视频消息
+            onPresence: function ( message ) {},       //处理“广播”或“发布-订阅”消息，如联系人订阅请求、处理群组、聊天室被踢解散等消息
+            onRoster: function ( message ) {},         //处理好友申请
+            onInviteMessage: function ( message ) {},  //处理群组邀请
+            onOnline: function () {},                  //本机网络连接成功
+            onOffline: function () {},                 //本机网络掉线
+            onError: function ( message ) {},          //失败回调
+            onBlacklistUpdate: function (list) {       //黑名单变动
+                // 查询黑名单，将好友拉黑，将好友从黑名单移除都会回调这个函数，list则是黑名单现有的所有好友信息
+                console.log(list);
+            },
+            onReceivedMessage: function(message){},    //收到消息送达服务器回执
+            onDeliveredMessage: function(message){},   //收到消息送达客户端回执
+            onReadMessage: function(message){},        //收到消息已读回执
+            onCreateGroup: function(message){},        //创建群组成功回执（需调用createGroupNew）
+            onMutedMessage: function(message){}        //如果用户在A群组被禁言，在A群发消息会走这个回调并且消息不会传递给群其它成员
+        });
+
+        // 获取好友列表
+        conn.getRoster({
+            success: function ( roster ) {
+                //获取好友列表，并进行好友列表渲染，roster格式为：
+                /** [
+                    {
+                        jid:'asemoemo#chatdemoui_test1@easemob.com',
+                        name:'test1',
+                        subscription: 'both'
+                    }
+                    ]
+                */
+                for ( var i = 0, l = roster.length; i < l; i++ ) {
+                var ros = roster[i];    
+                    //ros.subscription值为both/to为要显示的联系人，此处与APP需保持一致，才能保证两个客户端登录后的好友列表一致
+                    if ( ros.subscription === 'both' ) {
+                        var name_html1 = $friends.html() + '<div class="related-name">' + ros.name + '</div>' 
+                        $friends.html(name_html1);
+                    }else if ( ros.subscription === 'to' ) {
+                        var name_html2 = $friends.html() + '<div class="related-name">' + ros.name + '</div>' 
+                        $friends.html(name_html2);
+                    }
+                }
+            },    
+        });
+
+        // 添加好友
+        var addFriends = function () {
+            conn.subscribe({
+                to: 'username',
+                // Demo里面接收方没有展现出来这个message，在status字段里面
+                message: '加个好友呗!'   
+            });
+        };
+
+        // 同意添加对方为好友
+        conn.listen({
+        onPresence: function ( message ) {
+            handlePresence(message);
+        }
+        });
+
+
+        //收到联系人订阅请求的处理方法，具体的type值所对应的值请参考xmpp协议规范
+        var handlePresence = function ( e ) {
+
+        //对方收到请求加为好友
+        if (e.type === 'subscribe') {
+        
+            /*同意添加好友操作的实现方法*/
+            conn.subscribed({
+            to: 'username',
+            message : '[resp:true]'
+            });
+            conn.subscribe({//需要反向添加对方好友
+            to: e.from,
+            message : '[resp:true]'
+            });
+        }
+        }
+
+        // 单聊发送文本消息
+        var sendPrivateText = function () {
+            var id = conn.getUniqueId();                 // 生成本地消息id
+            var msg = new WebIM.message('txt', id);      // 创建文本消息
+            msg.set({
+                msg: 'message content',                  // 消息内容
+                to: 'username',                          // 接收消息对象（用户id）
+                roomType: false,
+                success: function (id, serverMsgId) {
+                    console.log('send private text Success');
+                },
+                fail: function(e){
+                    console.log("Send private text error");
+                }
+            });
+            msg.body.chatType = 'singleChat';
+            conn.send(msg.body);
+        };        
+    </script>
+    <script>
+        $(function(){
+            $friends_label = $("#my-friends-label")
+            $single_label = $("#my-single-friends-label")
+            $blacks_label = $("#my-blacks-label")
+            $my_friends = $("#my-friends")
+            $my_single = $("#my-single-friends")
+            $my_blacks = $("#my-blacks")
+
+            $friends_label.click(function(){
+                $my_friends.slideToggle();
+                toggle_label($(this));
+            })
+            $single_label.click(function(){
+                $my_single.slideToggle()
+                toggle_label($(this));
+            })
+            $blacks_label.click(function(){
+                $my_blacks.slideToggle()                
+                toggle_label($(this));
+            })
+
+            function toggle_label(that){
+                str = that.text()
+                if (that.text().charAt(str.length-1) === 'v'){
+                    that.text(str.substring(0, str.length-1) + '>');
+                }else{
+                    that.text(str.substring(0, str.length-1) + 'v');
+                }
+            }
+
+        })
+    </script>
+</head>
+<body>
+    <!-- 标题 -->
+    <h2 class="community-title">
+        hello，欢迎来到猴赛雷通信，基于环信通信...
+    </h2>
+    <div class="grey-line"></div>
+
+    <!-- 聊天窗口 -->
+    <div class="community-window">
+        <div class="histry-msg">
+        </div>
+
+        <!-- 搜索添加好友 -->
+        <div class="search-add-user">
+            <input type="text" class="search-user-input" id="search-user-input" placeholder="搜索用户名">
+            <button class="search-button">搜索一下吧</button>
+            <input type="text" class="search-user-input" id="search-user-msg" placeholder="稍一句话吧～">
+            <button class="search-button">发送好友申请</button><button class="search-button">取消</button>
+        </div>
+        <!-- 我的好友栏 -->
+        <div class="my-friends-line">
+            <div class="my-friends-label" id="my-friends-label">我的好友 v</div>
+            <div class="my-friends" id="my-friends">
+                <div class="related-name">六六六</div>
+                <div class="related-name">七七七</div>
+                <div class="related-name">八八八</div>
+            </div>
+            <div class="my-single-friends-label" id="my-single-friends-label">我的单向好友 v</div>
+            <div class="my-single-friends" id="my-single-friends">
+                <div class="related-name">九九九</div>
+            </div>
+            <div class="my-blacks-label" id="my-blacks-label">我的黑名单 v</div>
+            <div class="my-blacks" id="my-blacks">
+                    <div class="related-name">十十十</div>
+            </div>
+        </div>
+
+        <div class="grey-line"></div>
+
+        <!-- 发送信息栏 -->
+        <div class="editor-msg">
+            <div class="enter-line">
+                XXXXXX
+                <button class="enter-button">发送</button>
+            </div>
+            <div class="grey-line" style="height:1px;"></div>
+            <div>
+                <textarea name="" id="" class="textarea-msg" placeholder="请输入"></textarea>
+            </div>
+        </div>
+
+    </div>
+</body>
+<style>
+    .community-title{
+        color: green;
+        text-align: center;
+    }
+    .grey-line{
+        height: 3px;
+        background: #666;
+    }
+    .community-window{
+        width: 700px;
+        height: 570px;
+        border-width: 0 3px 3px 3px;
+        border-style: solid;
+        border-color: #666;
+        margin-left: 50%;
+        transform: translate(-50%, 0);
+        position: relative;
+    }
+    .histry-msg{
+        height: 432px;
+    }
+    .enter-line{
+        height: 30px;
+        line-height: 30px;
+    }
+    .enter-button{
+        height: 30px;
+        width: 48px;
+        font-size: 15px;
+        color: green;
+        padding-top: 0px; 
+        border-width: 0px 0px 0px 1px;
+        float: right;
+        outline: none;
+    }
+    .textarea-msg{
+        height: 100px;
+        width: 694px;
+        font-size: 15px;
+        border-width: 0px;
+        resize: none;
+        outline: none;
+    }
+    .search-add-user{
+        position: absolute;
+        left: -150px;
+        top: 0px;
+    }
+    .search-user-input{
+        display: block;
+        width: 143px;
+        height: 22px;
+        padding: 0px;
+        outline: none;
+    }
+    .search-button{
+        /* padding: 0px;
+        height: 20px;
+        color: green;
+        border-width: 0 1px 0 1px; 
+        margin-top: -20px; */
+
+        text-decoration:none;  
+        background:#2f435e;  
+        color:#f2f2f2;  
+        
+        padding: 3px 9px 3px 9px;  
+        font-size:12px;  
+        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
+        font-weight:bold;  
+        border-radius:3px;  
+        outline: none;
+        
+        -webkit-transition:all linear 0.30s;  
+        -moz-transition:all linear 0.30s;  
+        transition:all linear 0.30s;
+    }
+    .my-friends-line{
+        position: absolute;
+        right: -154px;
+        top: 0px;
+        width: 150px;
+        /* border: #666 solid; */
+        border-width: 0 1px 1px 0;
+    }
+    .my-friends-label, .my-single-friends-label, .my-blacks-label{
+        background:#2f435e;  
+        color:#f2f2f2;  
+        margin-top: 1px;
+        padding: 3px 9px 3px 9px;  
+        font-size:12px;  
+        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
+        font-weight:bold;  
+        border-radius:3px;  
+        outline: none;
+    }
+    .related-name{
+        background:#ccc;  
+        color:green;  
+        margin-top: 1px;
+        padding: 3px 9px 3px 9px;  
+        font-size:12px;  
+        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
+        font-weight:bold;  
+        border-radius:3px;  
+    }
+</style>
+</html>

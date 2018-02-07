@@ -6,8 +6,8 @@ from uauth import views
 
 # router注册视图
 router = routers.SimpleRouter()
-router.register(r"list-users", views.UserInfoList)
-router.register(r"detail-users", views.UserInfoDetail)
+router.register(r"users-list", views.UserInfoList)
+router.register(r"users-detail", views.UserInfoDetail)
 
 urlpatterns = [
     url(r'^$', views.index),
@@ -15,8 +15,11 @@ urlpatterns = [
     url(r'^logout/$', views.log_out),
     url(r'^register/$', views.register),
     url(r'^auth-token/$', obtain_auth_token),
-    url(r'send-email/$', views.test_send_email),
+    url(r'^send-email/$', views.test_send_email),
     # url(r'^', include(router.urls)),
+
+    url(r'^huanxin-user/$', views.register_huanxin_user),
+    url(r'^get-status/$', views.get_huanxin_user_status),
 ]
 
 urlpatterns += router.urls

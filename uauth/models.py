@@ -4,13 +4,15 @@ from rest_framework.authtoken.models import Token
 
 from db.base_model import BaseModel
 from utils.uauth_utils import avatar_upload_path, get_user_hash
+from utils.chat_utils import get_rong_token
 
 
 class UserInfo(BaseModel):
+    user_hash = models.CharField(max_length=40)
     email = models.EmailField(verbose_name="邮箱")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.BooleanField(default=1, verbose_name="性别")
-    user_hash = models.CharField(max_length=40, verbose_name="唯一标示")
+    im_token = models.CharField(max_length=255, null=True, blank=True)
     birthday = models.DateTimeField(verbose_name="生日", null=True, blank=True)
     mark = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="评分")
     mobile = models.CharField(max_length=11, null=True, blank=True, verbose_name="电话")
@@ -32,9 +34,12 @@ def create_user(**kwargs):
     with transaction.atomic():
         user = User.objects.create_user(**kwargs)
         Token.objects.create(user=user)
-        UserInfo.objects.create(
+        user_info = UserInfo.objects.create(
             user=user,
             username=kwargs["username"],
             user_hash=get_user_hash(user.id)
         )
+        im_token = get_rong_token(user_info)
+        user_info.im_token = im_token
+        user_info.save()
     return user

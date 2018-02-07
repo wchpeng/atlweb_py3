@@ -22,15 +22,17 @@ from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
 from .settings import MEDIA_ROOT
 
-schema_view = get_schema_view(title="api docs", renderer_classes=(SwaggerUIRenderer, OpenAPIRenderer))
+schema_view = get_schema_view(title="api docs", url="127.0.0.1:8000/uauth/login/", renderer_classes=(SwaggerUIRenderer, OpenAPIRenderer))
 
 urlpatterns = [
     url(r'^docs/$', schema_view, name="docs"),
     url(r'^api-auth/', include('rest_framework.urls', namespace="rest_framework")),
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT,'show_indexes':True}),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT, 'show_indexes': True}),
     path('admin/', admin.site.urls),
     path('uauth/', include('uauth.urls')),
     path('image/', include('image.urls')),
     path('mainapp/', include('mainapp.urls')),
     path('community/', include('community.urls')),
+    path('chat/', include('chat.urls')),
+    path('social/', include('social.urls')),
 ]

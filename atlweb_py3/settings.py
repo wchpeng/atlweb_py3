@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'uauth',
     'image',
     'community',
+    'chat',
+    'social',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +62,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'atlweb_py3.urls'
+LOGIN_URL = "/uauth/login/"
+LOGOUT_URL = "/uauth/"
 
 TEMPLATES = [
     {
@@ -169,3 +173,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'smartwu_sir@163.com'
 EMAIL_HOST_PASSWORD = 'woshi006'
 EMAIL_FROM = '猴赛雷<smartwu_sir@163.com>'
+
+# 融云 develop环境
+rong_app_key = "kj7swf8okiwu2"
+rong_app_secret = "LgNetpgObK2rYz"

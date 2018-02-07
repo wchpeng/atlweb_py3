@@ -1,5 +1,8 @@
-import hashlib
 import time
+import hashlib
+from rongcloud import RongCloud
+
+from atlweb_py3.settings import rong_app_key, rong_app_secret
 
 
 # 加密
@@ -12,4 +15,6 @@ def get_user_hash(val):
 def avatar_upload_path(instance, filename):
     suffix = filename[filename.rfind("."):]
     return "{}/{}{}".format(instance.userinfo.user_hash, get_user_hash(filename), suffix)
+
+
 
