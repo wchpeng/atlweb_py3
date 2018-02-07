@@ -18,10 +18,10 @@ def chat_index(request):
         "username": request.user.userinfo.username,
     }
     friends_info = FollowUser.objects.filter(from_user_id=request.user.id).\
-        annotate(username=F("to_user__userinfo__username"), user_hash=F("to_user__userinfo__user_hash"), avatar=F("to_user__userinfo__avatara")).\
+        annotate(username=F("to_user__userinfo__username"), user_hash=F("to_user__userinfo__user_hash"), avatar=F("to_user__userinfo__avatar")).\
         values("username", "user_hash", "avatar")
     blacks_info = BlackUser.objects.filter(from_user_id=request.user.id). \
-        annotate(username=F("to_user__userinfo__username"), user_hash=F("to_user__userinfo__user_hash"), avatar=F("to_user__userinfo__avatara")). \
+        annotate(username=F("to_user__userinfo__username"), user_hash=F("to_user__userinfo__user_hash"), avatar=F("to_user__userinfo__avatar")). \
         values("username", "user_hash", "avatar")
     ret = {
         "my_info": my_info,
