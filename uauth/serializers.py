@@ -22,4 +22,4 @@ class UserInfoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserInfo
-        fields = ("id", "gender", "signature", "username", "avatar", "birthday")
+        fields = ("id", "user", "gender", "signature", "username", "avatar", "birthday")

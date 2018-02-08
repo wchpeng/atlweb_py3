@@ -13,6 +13,7 @@ def chat_index(request):
     app_key = rong_app_key
     im_token = request.user.userinfo.im_token
     my_info = {
+        "user_id": request.user.id,
         "id": request.user.userinfo.user_hash,
         "avatar": request.user.userinfo.avatar.name,
         "username": request.user.userinfo.username,

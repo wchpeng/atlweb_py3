@@ -27,6 +27,7 @@
             var $search_start = $("#search-start");
             var $add_user_apply = $("#add-user-apply");
             var $search_user_input = $("#search-user-input");
+            var $search_cancel = $("#search-cancel");
 
             var userInfo = {
                 appKey: "{{ app_key }}",
@@ -34,6 +35,7 @@
             };
 
             var myInfo = {
+                user_id: {{ my_info.user_id }},
                 id: "{{ my_info.user_hash }}",
                 name: "{{ my_info.username }}",
                 portrait: "{{ my_info.avatar }}"
@@ -268,7 +270,7 @@
                             alert("无数据");
                         } else {
                             for (var i=0; i<data.length; i++){
-                                add_serach_user_result(data[i].username, data[i].id);
+                                add_serach_user_result(data[i].username, data[i].user);
                             }
                         }
                     });
@@ -291,18 +293,15 @@
 
                     if ($(this)[0].checked == true){
                         var url = "/social/follows/";
-                        var data = {"to_user": parseInt($(this).prop("id")), "from_user": myInfo.id};
+                        var data = {"to_user": parseInt($(this).prop("id")), "from_user": myInfo.user_id};
                         console.log(url);
                         console.log(data);
                         $.ajax({
                             url: url,
-                            data: data,
+                            data: JSON.stringify(data),
                             type: 'post',
                             dataType: 'json',
                             contentType: 'application/json',
-{#                            beforeSend: function(xhr){#}
-{#                                xhr.withCredentials = true;#}
-{#                            }#}
                         }).done(function(){
                             console.log("添加成功.");
                         }).fail(function(){
@@ -310,6 +309,10 @@
                         })
                     }
                 })
+            });
+
+            $search_cancel.click(function(){
+                clear_search_user_result();
             });
 
             // 让滚动条直接放到该scroll的最后
@@ -415,11 +418,10 @@
             <input type="text" class="search-user-input" id="search-user-input" placeholder="搜索用户名">
             <button class="search-button" id="search-start">搜索一下吧</button>
             <input type="text" class="search-user-input" id="search-user-msg" placeholder="稍一句话吧～">
-            <button class="search-button" id="add-user-apply">发送好友申请</button><button class="search-button">取消</button>
+            <button class="search-button" id="add-user-apply">发送好友申请</button><button class="search-button" id="search-cancel">取消</button>
 
             <!-- 好友提示信息 -->
             <div class="search-user-result" id="search-user-result">
-                <div class="search-user-result"><input type="checkbox" name="add-user" value="zhangsan" id="1" class="select-user"><span class="search-user-name">zhangsan</span></div>
             </div>
 
         </div>
@@ -529,14 +531,15 @@
     }
     .search-add-user{
         position: absolute;
-        left: -150px;
+        left: -148px;
         top: 0px;
     }
     .search-user-input{
         display: block;
-        width: 143px;
+        width: 140px;
         height: 22px;
         padding: 0px;
+        margin-left: 2px;
         outline: none;
     }
     .search-button{
