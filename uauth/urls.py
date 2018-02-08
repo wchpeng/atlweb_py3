@@ -17,9 +17,6 @@ urlpatterns = [
     url(r'^auth-token/$', obtain_auth_token),
     url(r'^send-email/$', views.test_send_email),
     # url(r'^', include(router.urls)),
-
-    url(r'^huanxin-user/$', views.register_huanxin_user),
-    url(r'^get-status/$', views.get_huanxin_user_status),
 ]
 
 urlpatterns += router.urls

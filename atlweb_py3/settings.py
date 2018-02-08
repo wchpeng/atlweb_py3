@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'django_filters',
+    'ckeditor',
+    'ckeditor_uploader',
     'uauth',
     'image',
     'community',
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.middlewares.DisableCSRFCheck',
 ]
 
 ROOT_URLCONF = 'atlweb_py3.urls'
@@ -132,7 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'zh-Hans'
+LANGUAGE_CODE = 'zh-hans'
 TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 USE_L10N = True
@@ -150,6 +153,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIAFILE_DIRS = (os.path.join(BASE_DIR, 'media'))
+
+# 富文本编辑器配置图片保存路径
+CKEDITOR_UPLOAD_PATH = "ckeditor/"
 
 # 配置rest-framework
 REST_FRAMEWORK = {

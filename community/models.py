@@ -1,9 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
+# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from rest_framework import permissions, mixins, generics, viewsets
 from db.base_model import BaseModel
 from image.models import Album, Picture
+
+
+class Blog(BaseModel):
+    """blog"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=32)
+    content = RichTextUploadingField()
+
+    def __str__(self):
+        return "{} {}".format(self.id, self.title[:10])
+
+    class Meta:
+        ordering = ("-id",)
 
 
 class Review(BaseModel):

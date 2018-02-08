@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^docs/$', schema_view, name="docs"),
     url(r'^api-auth/', include('rest_framework.urls', namespace="rest_framework")),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT, 'show_indexes': True}),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls),
     path('uauth/', include('uauth.urls')),
     path('image/', include('image.urls')),

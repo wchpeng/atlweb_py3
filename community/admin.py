@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from community.models import Blog
+
+admin.site.register(Blog)

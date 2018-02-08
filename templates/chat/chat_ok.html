@@ -23,6 +23,10 @@
             var $enter_button = $("#enter-button");
             var $textarea_input = $("#textarea-input");
             var conversationType = RongIMLib.ConversationType.PRIVATE; // 私聊
+            var $search_user_result = $("#search-user-result");
+            var $search_start = $("#search-start");
+            var $add_user_apply = $("#add-user-apply");
+            var $search_user_input = $("#search-user-input");
 
             var userInfo = {
                 appKey: "{{ app_key }}",
@@ -208,18 +212,113 @@
 
             $enter_button.click(function () {
                 // 给发送键一个点击事件
-                var username = $talk_to_user.text();
-                var user_hash = $("#friends-" + username).attr("name");
                 var content = $textarea_input.val();
-                sendTextMessage(content, myInfo, user_hash);
-                $textarea_input.text("");
-                add_msg_item_right(myInfo.name, myInfo.portrait, content);
-                scroll_top_is_height();
+                if (content.replace("/[\r\ns]+/g", "")){
+                    var username = $talk_to_user.text();
+                    var user_hash = $("#friends-" + username).attr("name");
+                    sendTextMessage(content, myInfo, user_hash);
+                    $textarea_input.text("");
+                    add_msg_item_right(myInfo.name, myInfo.portrait, content);
+                    scroll_top_is_height();
+                }
+                make_textarea_input_blank();
+            });
+
+            $textarea_input.keyup(function (e) {
+                // 给发送键一个点击事件
+                if (!e.shiftKey && e.keyCode==13){
+                    var content = $textarea_input.val();
+                    if (content.replace("/(^s*)|(s*$)/g", "")){
+                        var username = $talk_to_user.text();
+                        var user_hash = $("#friends-" + username).attr("name");
+                        sendTextMessage(content, myInfo, user_hash);
+                        $textarea_input.text("");
+                        add_msg_item_right(myInfo.name, myInfo.portrait, content);
+                        scroll_top_is_height();
+{#                        make_textarea_input_blank();#}
+                    }
+                    make_textarea_input_blank();
+                }
+            });
+
+            $search_start.click(function(){
+                // 给搜索还有添加绑定事件,发送ajax请求
+                clear_search_user_result();
+                var url = "/uauth/users-list/";
+                var params = {"search": $search_user_input.val()};
+                $.get(url, params, function(data){
+                    if (data.length == 0){
+                        alert("无数据");
+                    } else {
+                        for (var i=0; i<data.length; i++){
+                            add_serach_user_result(data[i].username, data[i].id);
+                        }
+                    }
+                });
+            });
+
+            $search_user_input.keyup(function(e){
+                // 添加enter事件
+                if (e.keyCode == 13){
+                    clear_search_user_result();
+                    var url = "/uauth/users-list/";
+                    var params = {"search": $search_user_input.val()};
+                    $.get(url, params, function(data){
+                        if (data.length == 0){
+                            alert("无数据");
+                        } else {
+                            for (var i=0; i<data.length; i++){
+                                add_serach_user_result(data[i].username, data[i].id);
+                            }
+                        }
+                    });
+                }
+            });
+
+            $search_user_result.delegate(".search-user-name", "click", function(){
+                // 给选择好友的上级input下的span添加点击事件
+                if ($(this).prev()[0].checked){
+                    $(this).prev()[0].checked = false;
+                } else {
+                    $(this).prev()[0].checked = true;
+                }
+            });
+
+            $add_user_apply.click(function(){
+                console.log("into click...");
+                console.log($search_user_result.children("div").children("input").length);
+                $search_user_result.children("div").children("input").each(function(){
+
+                    if ($(this)[0].checked == true){
+                        var url = "/social/follows/";
+                        var data = {"to_user": parseInt($(this).prop("id")), "from_user": myInfo.id};
+                        console.log(url);
+                        console.log(data);
+                        $.ajax({
+                            url: url,
+                            data: data,
+                            type: 'post',
+                            dataType: 'json',
+                            contentType: 'application/json',
+{#                            beforeSend: function(xhr){#}
+{#                                xhr.withCredentials = true;#}
+{#                            }#}
+                        }).done(function(){
+                            console.log("添加成功.");
+                        }).fail(function(){
+                            console.log("添加失败");
+                        })
+                    }
+                })
             });
 
             // 让滚动条直接放到该scroll的最后
             scroll_top_is_height();
 
+            function make_textarea_input_blank(){
+                $textarea_input.val("");
+                $textarea_input.prop({"placeholder":"在输入让人"});
+            }
 
             function toggle_label(that) {
                 // 切换我的朋友列表的展示与隐藏
@@ -250,7 +349,7 @@
 
             function add_msg_item_left(username, img_url, content) {
                 // 点击发送消息的时候，增加一个msg元素
-                var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div"><img src="/media/' + img_url + '" alt="" class="personal-avatar"></div>';
+                var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div"><img src="' + img_url + '" alt="" class="personal-avatar"></div>';
                 var send_content = '<strong class="personal-name">' + username + '</strong></div><div class="msg-info">' + content + '</div></div>';
                 var $html = $(img_avatar + send_content);
                 $("#" + username).append($html);
@@ -282,6 +381,16 @@
             function change_talk_to_user(username) {
                 $talk_to_user.text(username);
             }
+
+            function add_serach_user_result(username, user_id){
+                var $html = $('<div class="search-user-result"><input type="checkbox" name="user" value="'+ username +'" class="select-user" id="'+ user_id +'"><span class="search-user-name">'+ username +'</span></div>');
+                $search_user_result.append($html);
+            }
+
+            function clear_search_user_result(){
+                // 清空搜索好友结果的数据
+                $search_user_result.empty();
+            }
         })
     </script>
 </head>
@@ -304,9 +413,15 @@
         <!-- 搜索添加好友 -->
         <div class="search-add-user">
             <input type="text" class="search-user-input" id="search-user-input" placeholder="搜索用户名">
-            <button class="search-button">搜索一下吧</button>
+            <button class="search-button" id="search-start">搜索一下吧</button>
             <input type="text" class="search-user-input" id="search-user-msg" placeholder="稍一句话吧～">
-            <button class="search-button">发送好友申请</button><button class="search-button">取消</button>
+            <button class="search-button" id="add-user-apply">发送好友申请</button><button class="search-button">取消</button>
+
+            <!-- 好友提示信息 -->
+            <div class="search-user-result" id="search-user-result">
+                <div class="search-user-result"><input type="checkbox" name="add-user" value="zhangsan" id="1" class="select-user"><span class="search-user-name">zhangsan</span></div>
+            </div>
+
         </div>
         <!-- 我的好友栏 -->
         <div class="my-friends-line">

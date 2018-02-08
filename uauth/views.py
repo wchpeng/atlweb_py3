@@ -10,7 +10,7 @@ from django.contrib.auth import logout, login, authenticate
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import mixins, generics, permissions, viewsets
+from rest_framework import mixins, generics, permissions, viewsets, filters
 
 from uauth.tasks import send_email
 from uauth.models import UserInfo, create_user
@@ -96,6 +96,8 @@ class UserInfoDetail(generics.RetrieveUpdateAPIView, viewsets.GenericViewSet):
 class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = UserInfo.objects.all()
     serializer_class = UserInfoRetrieveSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("username",)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -105,32 +107,3 @@ class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
-
-
-# 注册环信
-@api_view(["GET"])
-def register_huanxin_user(request):
-    from huanxin.my_friends import Friends
-    from huanxin.get_token import Token
-    token = Token().get_token()
-    f = Friends(token)
-    us = UserInfo.objects.all()
-    data_list = []
-    for u in us:
-        res = f.register_user(username=u.username, password="123", nick_name=u.username)
-        print(res)
-        data_list.append(res)
-    return Response(data_list)
-
-
-# 注册环信
-@api_view(["GET"])
-def get_huanxin_user_status(request):
-    username = request.GET.get("username")
-    from huanxin.messages import Message
-    from huanxin.get_token import Token
-    token = Token().get_token()
-    print(token)
-    m = Message(access_token=token, msg="a", target="a")
-    res = m.get_user_status(username)
-    return Response(res)
