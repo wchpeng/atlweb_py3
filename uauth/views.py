@@ -38,14 +38,15 @@ def log_in(request):
 # 注册
 @require_POST
 def register(request):
+    email = request.POST.get("email", "")
     username = request.POST.get("username", "")
     password = request.POST.get("password", "")
 
     if not re.match(r'^[a-zA-Z0-9]\w{7,}$', username):
         return JsonResponse({"detail": "用户名不合规范"})
-    if all([username, password]):
+    if all([username, password, email]):
         try:
-            user = create_user(username=username, password=password)
+            user = create_user(username=username, password=password, email=email)
         except IntegrityError:
             return JsonResponse({"detail": "用户名已存在"})
         login(request, user)

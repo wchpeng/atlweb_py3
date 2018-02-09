@@ -1,107 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset="utf-8">
-<title>Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<meta name="keywords" content="Flat Dark Web Login Form Responsive Templates, Iphone Widget Template, Smartphone login forms,Login form, Widget Template, Responsive Templates, a Ipad 404 Templates, Flat Responsive Templates" />
-<link href="/static/css/login.css" rel='stylesheet' type='text/css' />
-<!--webfonts-->
-{#<link href='http://fonts.useso.com/css?family=PT+Sans:400,700,400italic,700italic|Oswald:400,300,700' rel='stylesheet' type='text/css'>#}
-{#<link href='http://fonts.useso.com/css?family=Exo+2' rel='stylesheet' type='text/css'>#}
-<!--//webfonts-->
-<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-</head>
-<style>
-    .switch-div{
-        height: 35px;
-        color: green;
-        font-size: 20px;
-        line-height: 35px;
-        font-weight: bold;
-        text-align: center;
-        border:2px black solid;
-    }
-    .form2{
-        display: none;
-    }
-    .detail-div{
-        color: #fff;
-        margin-bottom:-36px;
-        text-align:center;
-    }
-</style>
-<body>
-<script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+        /* 清除浮动 */
+        .clearfix:after,.clearfix:before{ content: "";display: table;}
+        .clearfix:after{ clear:both;}
+        .clearfix{zoom:1;}
 
-	$(document).ready(function(c) {
-		$('.close').on('click', function(c){
-			$('.login-form').fadeOut('slow', function(c){
-				$('.login-form').remove();
-			});
-		});
-
-        var $switch = $(".switch-div");
-        var $form1 = $(".form1");
-        var $form2 = $(".form2");
-
-		$switch.click(function(){
-		    $form1.toggle();
-		    $form2.toggle();
-            toggle_button();
-        });
-
-		function toggle_button(){
-		    if($switch.text() == "切换：注册"){
-		        $switch.text("切换：登陆")
-            }else{
-                $switch.text("切换：注册");
-            }
+        .pictures{
+            position:fixed;
+            top:0;
+            left:0;
+            height:100%;
+            width:480px;
+            overflow:hidden;
+            background-repeat:no-repeat;
+            background-position:center;
+            background-size:cover;
+            background-image: url("/media/banner/login/school_flower.jpg")
         }
-	});
+        .register-login-info{
+            position:absolute;
+            padding-bottom:10px;
+            left: 480px;
+            top:100px;
+            width: 850px;
+            /* background: #aae; */
+        }
+        .form{
+            /* background: #dab; */
+            position:relative;
+            margin:0 auto;
+            width:480px;
+        }
+        .auto-input{
+            width: 480px;
+            height: 51px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            font-size: 19px;
+            text-indent: 12px;
+            outline: none;
+        }
+        .auto-submit{
+            width: 480px;
+            height: 51px;
+            border-radius: 8px;
+            font-size: 22px;
+            color: #fff;
+            outline: none;
+        }
+        .input-content{
+            /* margin-top: 33px; */
+        }
+        .input-background{
+            background: #fcfec4;
+            border-color: #ef6661;
+        }
+        .navi-bar{
+            height: 20px;
+            margin-top: 30px;
+            padding-right: 60px; 
+        }
+        .toggle-login-register{
+            float: right;
+            color: #aaa;
+            font-size: 16px;
+        }
+        .input-block{
+            position: relative;
+            height: 33px;
+        }
+        .error-tips{
+            position: absolute;
+            left: 0;
+            /* bottom: 0; */
+            color: red;
+            display: none;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+    </style>
+    <script>
+        $(function(){
+            var $to_login = $("#to-login");
+            var $to_register = $("#to-register");
+            var $login_form = $("#login-form");
+            var $register_form = $("#register-form");
+            var $navi_bar = $("#navi-bar");
+            var $register_pwd = $("#register-pwd");
+            var $register_name = $("#register-name");
+            var $register_email = $("#register-email");
+            var $login_pwd = $("#login-pwd");
+            var $login_name = $("#login-name");
+            var $login_name_tips = $("#login-name-tips");
+            var $register_name_tips = $("#register-name-tips");
+            var $register_email_tips = $("#register-email-tips");
+            var $login_submit = $("#login-submit");
+            var $register_submit = $("#register-submit");
+            var $login = $("#login");
+            var $register = $("#register");
 
-</script>
-<!--SIGN UP-->
-<div class="switch-div">切换：注册</div>
+            var valid_login_pwd = false;
+            var valid_register_pwd = false;
+            var valid_login_name = false;
+            var valid_register_name = false;
+            var valid_register_email = false;
 
-<h1>homework submission system</h1>
-<div class="login-form">
-	<div class="close"> </div>
-	<div class="head-info">
-		<label class="lbl-1"> </label>
-		<label class="lbl-2"> </label>
-		<label class="lbl-3"> </label>
-	</div>
-	<div class="clear"> </div>
-	<div class="avtar">
-		<img src="/media/default_avatar.png" />
-	</div>
+            $register_email.blur(function(){
+                // 注册email的失去焦点事件
+                var ret = $(this).val();
+                var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+                if (reg.test(ret) == true){
+                    valid_register_email = true;
+                    $(this).removeClass("input-background");
+                    $register_email_tips.hide();
+                } else {
+                    valid_register_email = false;
+                    $(this).addClass("input-background");
+                    $register_email_tips.show();
+                }
+            });
 
-    <div class="detail-div">{{ detail }}</div>
+            $register_name.blur(function(){
+                // 注册username的失去焦点事件
+                var ret = $(this).val();
+                if (ret.length >= 8){
+                    if (ret.match(/^[a-zA-Z0-9_-]+$/) == true){
+                        valid_register_name = true;
+                        $(this).removeClass("input-background");
+                        $register_name_tips.hide();
+                    } else {
+                        valid_register_name = false;
+                        $(this).addClass("input-background");
+                        $register_name_tips.show();
+                    }
+                } else {
+                    valid_register_name = false;
+                    $(this).addClass("input-background");
+                    $register_name_tips.show();
+                }
+            });
 
-    <form action="/uauth/login/" method="post" class="form1">
-        {% csrf_token %}
-		<input type="text" class="text" value="usename" name="username" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '???';}" >
-		<div class="key">
-			<input type="password" value="Password"  name="password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Password';}">
-		</div>
-        <div class="signin">
-			<input type="submit" value="Login" >
-		</div>
-	</form>
+            $login_name.blur(function(){
+                // 登录username的失去焦点事件
+                var ret = $(this).val();
+                if (ret.length >= 8){
+                    var reg = /(^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+)|(^[a-zA-Z0-9_-]+$)/;
+                    if (reg.test(ret) == true){
+                        valid_login_name = true;
+                        $(this).removeClass("input-background");
+                        $login_name_tips.hide();
+                    } else {
+                        valid_login_name = false;
+                        $(this).addClass("input-background");
+                        $login_name_tips.show();
+                    }
+                } else {
+                    valid_login_name = false;
+                    $login_name_tips.show();
+                    $(this).addClass("input-background");
+                }
+            });
 
-    <form action="/uauth/register/" method="post" class="form2">
-        {% csrf_token %}
-        <input type="text" class="text" value="usename" name="username" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '???';}" >
-        <div class="key">
-            <input type="password" value="Password"  name="password" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Password';}">
+            $login.submit(function(){
+                if (valid_login_name == false){
+                    return false;
+                }
+                if ($login_pwd.val() == ""){
+                    return false;
+                }
+            });
+
+            $register.submit(function(){
+                if (valid_register_email == false || valid_register_name == false){
+                    return false;
+                }
+                if ($login_pwd.val() == ""){
+                    return false;
+                }
+            });
+
+            $to_register.click(function(){
+                // 给点击去注册加点击显示注册页事件
+                $login_form.toggle();
+                $register_form.toggle();
+                $to_login.toggle();
+                $(this).toggle();
+            });
+
+            $to_login.click(function(){
+                // 给点击去登录加点击显示注册页事件
+                $login_form.toggle();
+                $register_form.toggle();
+                $to_register.toggle();
+                $(this).toggle();
+            });
+
+            $navi_bar.on("mouseover", ".toggle-login-register", function(){
+                $(this).css("color", "#333");
+            });
+            $navi_bar.on("mouseout", ".toggle-login-register", function(){
+                $(this).css("color", "#aaa");
+            });
+
+        })
+    </script>
+</head>
+<body>
+
+    <div class="pictures" id="pictures"></div>
+    <div class="navi-bar clearfix" id="navi-bar">
+        <div class="toggle-login-register" id="to-register">还没账号？点击注册！</div>
+        <div class="toggle-login-register" style="display:none;" id="to-login">已有账号？点击登录！</div>
+    </div>
+
+    <div class="register-login-info" id="login-register-info">
+
+        <div class="form">
+            <div id="register-form" style="display:none;">
+                <div style="font-size:35px;margin-bottom:33px;">欢迎注册ponk</div>
+                <div style="font-size:20px;margin-bottom:60px;">分享，让你我更亲近。</div>
+                <form action="/uauth/register/" method="post" id="register">
+                    <div class="input-content">
+                        <input type="text" class="auto-input" name="username" id="register-name" placeholder="昵称">
+                    </div>
+                    <div class="input-block">
+                        <div class="error-tips" id="register-name-tips">! 用户名不规范，应大于8个字符，由数字/字母/下划线组成</div>
+                    </div>
+                    <div class="input-content">
+                        <input type="text" class="auto-input" name="email" id="register-email" placeholder="Email">
+                    </div>
+                    <div class="input-block">
+                        <div class="error-tips" id="register-email-tips">! 邮箱格式错误</div>
+                    </div>
+                    <div class="input-content">
+                        <input type="password" class="auto-input" name="password" id="register-pwd" placeholder="密码">
+                    </div>
+                    <div class="input-block"></div>
+                    <div class="input-content">
+                        <input type="submit" class="auto-submit" id="register-submit" style="background:#4186f6;text-align:center;" value="立即注册">
+                    </div>
+                </form>
+            </div>
+            
+            <div id="login-form">
+                <div style="font-size:35px;margin-bottom:33px;">欢迎登录ponk</div>
+                <div style="font-size:20px;margin-bottom:60px;">分享，你我更亲近。</div>
+                <form action="/uauth/login/" method="post" id="login">
+                    <div class="input-content">
+                        <input type="text" class="auto-input" name="username" id="login-name" placeholder="昵称或Email">
+                    </div>
+                    <div class="input-block">
+                        <div class="error-tips" id="login-name-tips">! 用户名不规范或邮箱格式错误</div>
+                    </div>
+                    <div class="input-content">
+                        <input type="password" class="auto-input" name="password" id="login-pwd" placeholder="密码">
+                    </div>
+                    <div class="input-block"></div>
+                    <div class="input-content">
+                        <input type="submit" class="auto-submit" id="login-submit" style="background:#4186f6;text-align:center;" value="登录">
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="signin">
-            <input type="submit" value="register" >
-        </div>
-	</form>
-    
-</div>
+
+
+    </div>
 </body>
 </html>

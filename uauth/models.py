@@ -36,8 +36,9 @@ def create_user(**kwargs):
         Token.objects.create(user=user)
         user_info = UserInfo.objects.create(
             user=user,
+            email=kwargs["email"],
             username=kwargs["username"],
-            user_hash=get_user_hash(user.id)
+            user_hash=get_user_hash(user.id),
         )
         im_token = get_rong_token(user_info)
         user_info.im_token = im_token
