@@ -116,8 +116,13 @@
                 // 注册email的失去焦点事件
                 var ret = $(this).val();
                 var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
-                if (reg.test(ret) == true){
-                    valid_register_email = true;
+                if (reg.test(ret) == true || ret == ""){
+                    if (ret != ""){
+                        valid_register_email = true;
+                    } else {
+                        valid_register_email = false;
+                    }
+
                     $(this).removeClass("input-background");
                     $register_email_tips.hide();
                 } else {
@@ -130,15 +135,20 @@
             $register_name.blur(function(){
                 // 注册username的失去焦点事件
                 var ret = $(this).val();
-                if (ret.length >= 8){
-                    if (ret.match(/^[a-zA-Z0-9_-]+$/) == true){
-                        valid_register_name = true;
+                var reg = /^[a-zA-Z0-9_-]+$/;
+                if (ret.length >= 8 || ret == ""){
+                    if (reg.test(ret) == true || ret == ""){
+                        if (ret != ""){
+                            valid_register_name = true;
+                        } else {
+                            valid_register_name = false;
+                        }
                         $(this).removeClass("input-background");
                         $register_name_tips.hide();
                     } else {
-                        valid_register_name = false;
                         $(this).addClass("input-background");
                         $register_name_tips.show();
+                        valid_register_name = false;
                     }
                 } else {
                     valid_register_name = false;
@@ -150,10 +160,14 @@
             $login_name.blur(function(){
                 // 登录username的失去焦点事件
                 var ret = $(this).val();
-                if (ret.length >= 8){
+                if (ret.length >= 8 || ret == ""){
                     var reg = /(^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+)|(^[a-zA-Z0-9_-]+$)/;
-                    if (reg.test(ret) == true){
-                        valid_login_name = true;
+                    if (reg.test(ret) == true || ret == ""){
+                        if (ret != ""){
+                            valid_login_name = true;
+                        } else {
+                            valid_login_name = false;
+                        }
                         $(this).removeClass("input-background");
                         $login_name_tips.hide();
                     } else {
