@@ -113,11 +113,19 @@
             var valid_login_name = false;
             var valid_register_name = false;
             var valid_register_email = false;
+            var bg_count = 0;
+            var bg_groups = [
+                "/media/banner/login/school_flower.jpg",
+                "/media/banner/login/green.jpg",
+                "/media/banner/login/dream.jpg"
+            ];
 
             change_div_width_by_document_width();
             $(window).resize(function(){
                 change_div_width_by_document_width();
             });
+
+            change_background();
 
             $register_email.blur(function(){
                 // 注册email的失去焦点事件
@@ -247,6 +255,13 @@
                     $login_register_info.css("left", "480px");
                 }
                 $login_register_info.css("width", div_width);
+            }
+
+            function change_background(){
+                $pictures.css("background-image", 'url("' + bg_groups[bg_count % bg_groups.length] + '")');
+                bg_count += 1;
+                console.log(bg_count);
+                setTimeout(change_background, 5000);
             }
         })
     </script>
