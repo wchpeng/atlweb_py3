@@ -105,12 +105,19 @@
             var $register_submit = $("#register-submit");
             var $login = $("#login");
             var $register = $("#register");
+            var $login_register_info = $("#login-register-info");
+            var $pictures = $("#pictures");
 
             var valid_login_pwd = false;
             var valid_register_pwd = false;
             var valid_login_name = false;
             var valid_register_name = false;
             var valid_register_email = false;
+
+            change_div_width_by_document_width();
+            $(window).resize(function(){
+                change_div_width_by_document_width();
+            });
 
             $register_email.blur(function(){
                 // 注册email的失去焦点事件
@@ -223,6 +230,24 @@
                 $(this).css("color", "#aaa");
             });
 
+            function change_div_width_by_document_width(){
+                var div_width = $(window).width() - 480 + "px";
+                // console.log(div_width);
+                // alert($(window).width());
+
+                if(parseInt(div_width) <= 550){
+                    // 如果宽度过小
+                    $pictures.removeClass("pictures");
+                    div_width = parseInt(div_width) + 480;
+                    $login_register_info.css("left", "0");
+                } else {
+                    // 如果宽度足够
+                    $pictures.addClass("pictures");
+                    // div_width = parseInt(div_width) + 480;
+                    $login_register_info.css("left", "480px");
+                }
+                $login_register_info.css("width", div_width);
+            }
         })
     </script>
 </head>
