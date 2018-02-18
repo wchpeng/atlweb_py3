@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./js/jquery-3.3.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/my_info.css">
+    <title>my-info</title>
+
+    <script>
+        $(function(){
+            var $add_pic = $("#add-pic");
+            var $add_album = $("#add-album");
+            var $black_tent = $("#black-tent");
+            var $add_album_no = $("#add-album-no");
+            var $add_album_div = $("#add-album-div");
+            var $add_album_yes = $("#add-album-yes");
+            var $input_name = $("#inputName");
+            var $input_describe = $("#inputDescribe");
+            var $row1 = $("#row1");
+
+            var is_name_valid = false;
+            var is_brief_valid = false;
+
+            $input_name.blur(function(){
+                var name = $(this).val();
+                if (name.length<15 && name != ""){
+                    is_name_valid = true;
+                } else {
+                    alert("名字不符合规范！")
+                }
+            });
+            $input_describe.blur(function(){
+                var brief = $(this).val();
+                if (brief.length<64){
+                    is_brief_valid = true;
+                }
+            });
+
+            // 添加我的图册
+            $add_album.click(function(){
+                $black_tent.show();
+                $add_album_div.show();
+            });
+            $add_album_yes.click(function(){
+                var name = $input_name.val();
+                var brief = $input_describe.val();
+                if (is_name_valid && is_brief_valid){
+                    data = {"name": name.replace(" ", ""), "brief": brief};
+                    alert(data);
+                    console.log(data);
+                    url = "/image/album-mod/";
+                    $.post(url, JSON.stringify(data), function(data){
+                        if (data.name == name){
+                            alert("成功了");
+                            location.reload();
+                        } else {
+                            return false;
+                        }
+                    });
+                    $black_tent.hide();
+                    $add_album_div.hide();
+                }
+            });
+            $add_album_no.click(function(){
+                $black_tent.hide();
+                $add_album_div.hide();
+            });
+
+            // 添加图片
+
+            // 显示一个相册
+            function add_one_album(img_url, content){
+                var $html = $('<div class="col-md-3 col-sm-4">\
+                                <a href="#" class="thumbnail">\
+                                    <img src="' + img_url + '" alt="" class="img-responsive">\
+                                    <p>' + content + '</p>\
+                                </a>\
+                            </div>');
+                $row1.append($html);
+            }
+        })
+    
+    </script>
+
+</head>
+<body>
+    <!-- 创建相册 -->
+
+    <div id="add-album-div" class="container">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+                <div class="album-form">
+                    <div class="grey-line">创建相册</div>
+                    <div class="create-album-form">
+                        <form class="form-horizontal" action="/uauth/ligon/" method="post">
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">相册名字:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputName" name="name" placeholder="相册名字(15个字以下)">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputDescribe" class="col-sm-2 control-label">相册描述:</label>
+                                <div class="col-sm-10">
+                                    <textarea type="" class="form-control" id="inputDescribe" name="brief" placeholder="相册描述(64个字以下)"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="auth" class="col-sm-2 control-label">权限:</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="auth" name="auth">
+                                        <option>全部可见</option>
+                                        <option>只有我可见</option>
+                                        <option>我的朋友可见</option>
+                                    </select>
+                                </div>
+                            </div>  
+                        </form>
+                    </div>
+                    <div class="grey-line">
+                        <p style="position:relative">
+                            <button type="submit" id="add-album-yes" class="btn btn-primary btn-md result-button" style="right:80px">确定</button>
+                            <button type="button" id="add-album-no" class="btn btn-default btn-md result-button">取消</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- // 头像+基本信息 -->
+        <ul class="nav nav-pills nav-justified" style="margin-top:20px;">
+            <li role="presentation" class="active"><a href="#">Home</a></li>
+            <li role="presentation"><a href="#">his info</a></li>
+            <li role="presentation"><a href="#">Messages</a></li>
+            <li class="text-right">
+                <div class="dropdown">
+                    <div class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border:none;">
+                        <span class="glyphicon glyphicon-plus" style="font-size:20px;padding-top:10px;"></span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                        <li id="add-pic"><a href="#">添加图片</a></li>
+                        <li id="add-album"><a href="#">添加相册</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <hr>
+        <div class="row">
+            <div class="col-sm-4">
+                <img src="./img/5.jpg" class="img-responsive img-circle img-avatar" alt="">
+            </div>
+            <div class="col-sm-8 my-info">
+                <div class="username">username  <span class="glyphicon glyphicon-certificate" style="color:#337ab7"></span></div>
+                <div class="follow"><span class="follow-span">1024帖子</span><span class="follow-span">1024关注</span><span class="follow-span">1024关注者</span></div>
+                <div class="signature">
+                    深入了解 Bootstrap 底层结构的关键部分，包括我们让 web 开发变得更好、更快、更强壮的最佳实践
+                </div>
+            </div>
+        </div>
+        <!-- // 相册信息 -->
+        <ul class="nav nav-tabs nav-justified" style="margin-bottom:20px;">
+            <li role="presentation"><a href="javasceipt:;">Home</a></li>
+            <li role="presentation" class="active"><a href="#">Messages</a></li>
+        </ul>
+        <div class="row" id="row1">
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+            <div class="col-md-3 col-sm-4">
+                <a href="#" class="thumbnail">
+                    <img src="./img/3.jpg" alt="" class="img-responsive">
+                    <p>contentQQ空间(Qzone)是中国最大的社交网络,是QQ用户的网上家园,是腾...</p>
+                    <div><span class="glyphicon glyphicon-picture"></span>&nbsp;111&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;112</div>
+                </a>
+             </div>
+        </div>
+        <button type="button" class="btn btn-success btn-block load-more">加载更多.. .</button>
+    </div>
+    <div class="jumbotron" style="margin-top:40px;margin-bottom:30px;">
+        <div class="text-center">
+            <a href="javascript:">关于我们</a>
+            <span style="margin-left:8px;margin-right:8px;">|</span>
+            <a href="javascript:">魑魅魍魉</a>
+            <span style="margin-left:8px;margin-right:8px;">|</span>
+            <a href="javascript:">忠犬罢工</a>
+            <span style="margin-left:8px;margin-right:8px;">|</span>
+            <a href="javascript:">人与自然</a>
+            <span style="margin-left:8px;margin-right:8px;">|</span>
+            <a href="javascript:">粤网文[2222]9527号</a>
+        </div>
+        <div class="text-center">
+            Copyright © 2005 - 2018 Tencent.All Rights Reserved.
+        </div>
+        <div class="text-center">
+            不可知之地 版权所有
+        </div>
+    </div>
+
+    <!-- // 黑蒙版 -->
+    <div id="black-tent"></div>
+        
+</body>
+</html>

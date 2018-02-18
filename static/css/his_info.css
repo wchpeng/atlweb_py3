@@ -1,0 +1,22 @@
+.img-avatar{
+    /* padding: 85px; */
+    padding: 18%;
+}
+.my-info{
+    padding-top: 66px;
+}
+.username{
+    font-size: 33px;
+}
+.follow, .signature{
+    margin-top: 28px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.follow-span{
+    margin-right: 33px;
+}
+.load-more{
+    padding: 6px 0;
+    margin-top: 20px;
+}

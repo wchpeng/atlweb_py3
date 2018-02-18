@@ -1,0 +1,50 @@
+body{
+    background-color: #f8f8f8!important;
+}
+.padding-div{
+    padding: 8px;
+}
+.album-content{
+    background-color: #fff;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 100px;
+    font-size: 14px;
+    line-height: 25px;
+}
+.username{
+    font-size: 16px;
+    line-height: 16px;
+    padding-top: 9px;
+    color: #b86045;
+    font-family: 微软雅黑;
+}
+.date{
+    font-size: 14px;
+    line-height: 16px;
+    padding-bottom: 9px; 
+    color: #bbb;
+}
+.album-interaction{
+    padding-left: 8px;
+    padding-right: 8px;
+    color: #949494;
+    height: 33px;
+    font-size: 12px;
+    line-height: 33px;
+    background-color: #f1f1f1;
+}
+.album-interaction-nums{
+    display: inline-block;
+    margin-left: -1px;
+    margin-right: 4px;
+}
+/* // 灰线 */
+.grey-line {
+    background-color: rgb(230, 191, 19);
+    height: 5px;
+    margin-bottom: 10px;
+}
+.load-more{
+    margin-top: 30px;
+}

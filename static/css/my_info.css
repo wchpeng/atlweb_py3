@@ -1,0 +1,64 @@
+.img-avatar{
+    /* padding: 85px; */
+    padding: 18%;
+}
+.my-info{
+    padding-top: 66px;
+}
+.username{
+    font-size: 33px;
+}
+.follow, .signature{
+    margin-top: 28px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.follow-span{
+    margin-right: 33px;
+}
+.load-more{
+    margin-top: 30px;
+}
+.upload-jumbotrom{
+    padding: 0;
+    line-height: 62px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.grey-line{
+    background-color: #eee;
+    line-height: 62px;
+    font-size: 20px;
+    padding-left: 20px;
+    height: 62px;
+}
+.result-button{
+    /* display: inline-block; */
+    /* float: right; */
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+#black-tent{
+    display: none;
+    height: 1000px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: #000;
+    opacity: 0.2;
+    width: 100%;
+    z-index: 0;
+}
+#add-album-div{
+    display: none;
+    margin-top: 50px;
+    z-index: 100;
+    position: relative;
+}
+.create-album-form{
+    padding:10px;
+}
+.album-form{
+    background-color:#fff
+}
