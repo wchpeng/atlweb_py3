@@ -9,7 +9,7 @@ from datetime import datetime
 
 from uauth.models import UserInfo
 from image.models import Picture, Album, FavoriteAlbum, get_albums_data_index, get_albums_data_search_index
-from image.serializers import AlbumListSerializer, AlbumDetailSerializer, PictureSerializer
+from image.serializers import AlbumListSerializer, AlbumDetailSerializer, PictureSerializer, AlbumCreateSerializer
 from utils.image_utils import handle_upload_pic
 from utils.permissions import IsOwnerRetrieveUpdate
 
@@ -42,7 +42,7 @@ class AlbumModView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         data["user"] = request.user.id
-        serializer = self.get_serializer(data)
+        serializer = AlbumCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)

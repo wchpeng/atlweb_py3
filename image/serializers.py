@@ -21,6 +21,16 @@ class AlbumDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "brief", "pictures", "add_date")
 
 
+class AlbumCreateSerializer(serializers.ModelSerializer):
+
+    # pictures = serializers.ManyRelatedField(Picture, allow_null=True, required=False)
+
+    """图册详情"""
+    class Meta:
+        model = Album
+        fields = ("name", "brief", "user")
+
+
 class PictureSerializer(serializers.ModelSerializer):
     """create 图片"""
     class Meta:

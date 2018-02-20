@@ -60,21 +60,30 @@
                 $add_album_div.show();
             });
             $add_album_yes.click(function(){
-                var name = $input_name.val();
+
+                var name = $input_name.val().replace("/^\s*/|/\s*$/", "");
                 var brief = $input_describe.val();
+                var csrf_token = $("input[name=csrfmiddlewaretoken]").val();
+
                 if (is_name_valid && is_brief_valid){
-                    var data = {"name": name.replace(" ", ""), "brief": brief};
-                    alert(data);
+                    var data = JSON.stringify({"csrfmiddlewaretoken":csrf_token, "name": name, "brief": brief});
                     console.log(data);
                     var url = "/image/album-mod/";
-                    $.post(url, JSON.stringify(data), function(data){
-                        if (data.name == name){
-                            alert("成功了");
-                            location.reload();
-                        } else {
-                            return false;
-                        }
+                    $.ajax({
+                        url: url,
+                        data: data,
+                        method: "post",
+                        dataType: "json",
+                        contentType: "application/json"
+                    }).done(function(data){
+                        console.log(data);
+                       if (data.name == name){
+                           console.log("成功率");
+                       }else{
+                           console.log("失败")
+                       }
                     });
+
                     $black_tent.hide();
                     $add_album_div.hide();
                 }
@@ -112,7 +121,8 @@
                 <div class="album-form">
                     <div class="grey-line">创建相册</div>
                     <div class="create-album-form">
-                        <form class="form-horizontal" action="/image/album-mod/" method="post">
+                        <form id="add-album-form" class="form-horizontal" action="" method="post">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label for="inputName" class="col-sm-2 control-label">相册名字:</label>
                                 <div class="col-sm-10">
@@ -139,7 +149,7 @@
                     </div>
                     <div class="grey-line">
                         <p style="position:relative">
-                            <button type="submit" id="add-album-yes" class="btn btn-primary btn-md result-button" style="right:80px">确定</button>
+                            <button type="button" id="add-album-yes" class="btn btn-primary btn-md result-button" style="right:80px">确定</button>
                             <button type="button" id="add-album-no" class="btn btn-default btn-md result-button">取消</button>
                         </p>
                     </div>
@@ -169,7 +179,11 @@
         <hr>
         <div class="row">
             <div class="col-sm-4">
-                <img src="/static/img/5.jpg" class="img-responsive img-circle img-avatar" alt="">
+                {% if user_info.avatar %}
+                    <img src="/media/{{ user_info.avatar.url }}" class="img-responsive img-circle img-avatar" alt="">
+                {% else %}
+                    <img src="/static/img/5.jpg" class="img-responsive img-circle img-avatar" alt="">
+                {% endif %}
             </div>
             <div class="col-sm-8 my-info">
                 <div class="username">{{ user_info.username }}&nbsp;<span class="glyphicon glyphicon-certificate" style="color:#337ab7"></span></div>
