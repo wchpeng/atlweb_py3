@@ -16,6 +16,8 @@ urlpatterns = [
     url(r'^register/$', views.register),
     url(r'^auth-token/$', obtain_auth_token),
     url(r'^send-email/$', views.test_send_email),
+    url(r"^my-info-page/$", views.my_info_page),
+    url(r"^his-info-page/(.+?)/$", views.his_info_page),
     # url(r'^', include(router.urls)),
 ]
 

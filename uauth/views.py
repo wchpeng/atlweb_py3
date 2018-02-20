@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import logout, login, authenticate, models
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -16,6 +16,8 @@ from uauth.tasks import send_email
 from uauth.models import UserInfo, create_user
 from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
 from utils.permissions import IsOwnerRetrieveUpdate
+from image.models import get_albums_data_info, get_favorite_albums_data_info, get_albums_count
+from social.models import followed_count, follow_count
 
 
 # 登陆
@@ -108,3 +110,48 @@ class UserInfoList(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = UserInfoListSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
+
+
+@login_required(login_url="/uauth/login/")
+def my_info_page(request):
+    user = request.user
+    user_info = UserInfo.objects.filter(user=user).values("user_id", "signature", "username", "avatar")[0]
+    user_info["follow"] = follow_count(user.id)
+    user_info["followed"] = followed_count(user.id)
+    user_info["albums_count"] = get_albums_count(user.id)
+
+    albums_data = get_albums_data_info(user=user)
+    fav_albums_data = get_favorite_albums_data_info(user.id)
+
+    ret = {
+        "owner": True,
+        "user_info": user_info,
+        "albums_data": albums_data,
+        "fav_albums_data": fav_albums_data
+    }
+
+    return render(request, "uauth/user_info.html", ret)
+    # return JsonResponse(ret)
+
+
+@login_required(login_url="/uauth/login/")
+def his_info_page(request, username):
+    user = UserInfo.objects.get(username=username).user
+    # user = models.User.objects.get(id=user_id)
+    user_info = UserInfo.objects.filter(user=user).values("user_id", "signature", "username", "avatar")[0]
+    user_info["follow"] = follow_count(user.id)
+    user_info["followed"] = followed_count(user.id)
+    user_info["albums_count"] = get_albums_count(user.id)
+
+    albums_data = get_albums_data_info(user_id=user.id)
+    # fav_albums_data = get_favorite_albums_data_info(user.id)
+
+    ret = {
+        "owner": False,
+        "user_info": user_info,
+        "albums_data": albums_data,
+        # "fav_albums_data": fav_albums_data
+    }
+
+    # return render(request, "uauth/user_info.html", ret)
+    return JsonResponse(ret)

@@ -1,267 +1,244 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="http://cdn.ronghub.com/RongIMLib-2.3.0.min.js"></script>
+{% extends "base.html" %}
+    {% block head-js %}
+{#        <script src="http://cdn.ronghub.com/RongIMLib-2.3.0.min.js"></script>#}
+        <script src="http://cdn.ronghub.com/RongIMLib-2.3.0.min.js"></script>
+        <script>
+            $(function() {
+                var $friends_label = $("#my-friends-label");
+                var $single_label = $("#my-single-friends-label");
+                var $blacks_label = $("#my-blacks-label");
+                var $my_friends = $("#my-friends");
+                var $related_name = $my_friends.children();
+                var $my_single = $("#my-single-friends");
+                var $my_blacks = $("#my-blacks");
+                var $talk_to_user = $("#talk-to-user");
+                var $community_window = $("#community-window");
+                var $history_msg = $(".history-msg");  // 所有的聊天窗口
+                var $enter_button = $("#enter-button");
+                var $textarea_input = $("#textarea-input");
+                var conversationType = RongIMLib.ConversationType.PRIVATE; // 私聊
+                var $search_user_result = $("#search-user-result");
+                var $search_start = $("#search-start");
+                var $add_user_apply = $("#add-user-apply");
+                var $search_user_input = $("#search-user-input");
+                var $search_cancel = $("#search-cancel");
 
-    <script>
-        $(function() {
-            var $friends_label = $("#my-friends-label");
-            var $single_label = $("#my-single-friends-label");
-            var $blacks_label = $("#my-blacks-label");
-            var $my_friends = $("#my-friends");
-            var $related_name = $my_friends.children();
-            var $my_single = $("#my-single-friends");
-            var $my_blacks = $("#my-blacks");
-            var $talk_to_user = $("#talk-to-user");
-            var $community_window = $("#community-window");
-            var $history_msg = $(".history-msg");  // 所有的聊天窗口
-            var $enter_button = $("#enter-button");
-            var $textarea_input = $("#textarea-input");
-            var conversationType = RongIMLib.ConversationType.PRIVATE; // 私聊
-            var $search_user_result = $("#search-user-result");
-            var $search_start = $("#search-start");
-            var $add_user_apply = $("#add-user-apply");
-            var $search_user_input = $("#search-user-input");
-            var $search_cancel = $("#search-cancel");
-
-            var userInfo = {
-                appKey: "{{ app_key }}",
-                token: "{{ im_token }}"
-            };
-
-            var myInfo = {
-                user_id: {{ my_info.user_id }},
-                id: "{{ my_info.user_hash }}",
-                name: "{{ my_info.username }}",
-                portrait: "{{ my_info.avatar }}"
-            };
-
-            var callbacks = {
-                Success: function(id){
-                    console.log("callbacks.Success: "+id);
-                },
-                Received: function(message){
-                    console.log("callbacks.Recieved message.content: "+message.content.content);
-                    console.log(message);
-                    var content = message.content.content;
-                    var user_hash = message.senderUserId;
-                    var $user_hash = $("div[name="+user_hash+"]");
-                    var username = $user_hash.prop("id").substring(8);
-                    var portrait = $("#friends-"+username+" div img").prop("src");
-
-                    add_msg_item_left(username, portrait, content);
-                    scroll_top_is_height();
-                }
-            };
-
-            var instance = init(userInfo, callbacks);
-
-
-            function init(userInfo,callbacks) {
-                if (!userInfo.appKey || !userInfo.token){
-                    return false;
-                }
-
-                //公有云初始化
-                RongIMLib.RongIMClient.init(userInfo.appKey);
-                var instance = RongIMClient.getInstance();
-
-                //连接状态监听器
-                RongIMClient.setConnectionStatusListener({
-                    onChanged: function (status) {
-                        switch (status) {
-                            case RongIMLib.ConnectionStatus.CONNECTED:
-                                console.log("链接成功 ");
-                                callbacks.CONNECTED && callbacks.CONNECTED(instance);
-                                break;
-                            case RongIMLib.ConnectionStatus.CONNECTING:
-                                console.log('正在链接');
-                                break;
-                            case RongIMLib.ConnectionStatus.DISCONNECTED:
-                                console.log('断开连接');
-                                break;
-                            case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-                                console.log('其他设备登录');
-                                break;
-                            case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
-                                console.log('域名不正确');
-                                break;
-                            case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
-                                console.log('网络不可用');
-                                break;
-                        }
-                    }
-                });
-
-                // 接收消息的回调
-                RongIMClient.setOnReceiveMessageListener({
-                    // 接收到的消息
-                    onReceived: function (message) {
-                        callbacks.Received && callbacks.Received(message);
-                        // alert(message.content.content);
-                    }
-                });
-
-
-                //开始链接
-                RongIMClient.connect(userInfo.token, {
-                    onSuccess: function (id) {
-                        callbacks.Success && callbacks.Success(id);
-                    },
-                    onTokenIncorrect: function () {
-                        console.log('token无效');
-                    },
-                    onError: function (errorCode) {
-                        var info = '';
-                        switch (errorCode) {
-                            case RongIMLib.ErrorCode.TIMEOUT:
-                                info = '超时';
-                                break;
-                            case RongIMLib.ErrorCode.UNKNOWN_ERROR:
-                                info = '未知错误';
-                                break;
-                            case RongIMLib.ErrorCode.UNACCEPTABLE_PaROTOCOL_VERSION:
-                                info = '不可接受的协议版本';
-                                break;
-                            case RongIMLib.ErrorCode.IDENTIFIER_REJECTED:
-                                info = 'appkey不正确';
-                                break;
-                            case RongIMLib.ErrorCode.SERVER_UNAVAILABLE:
-                                info = '服务器不可用';
-                                break;
-                        }
-                        console.log(info);
-                        alert(info)
-                    }
-                });
-                return instance;
-            }
-
-            // 发送txt消息
-            function sendTextMessage(content1, user, target_id){
-                /*
-                文档： http://www.rongcloud.cn/docs/web.html#5_1、发送消息
-                    http://rongcloud.cn/docs/api/js/TextMessage.html
-                1: 单条消息整体不得大于128K
-                2: conversatinType 类型是 number，targetId 类型是 string
-                */
-                /*
-                    1、不要多端登陆，保证所有端都离线
-                    2、接收 push 设备设置:
-                        （1）打开系统通知提醒
-                        （2）小米设置 “授权管理” －> “自己的应用” 为自启动
-                        （3）应用内不要屏蔽新消息通知
-                    3、内置消息类型，默认 push，自定义消息类型需要
-                    pushData 显示逻辑顺序：自定义 > 默认
-                    4、发送其他消息类型与发送 TextMessage 逻辑、方式一致
-                */
-                var pushData = "pushData" + Date.now();
-                var isMentioned = false;
-                var content = {
-                    content: content1,
-                    // user : {
-                    //     "id" : "this-is-a-test-id",	//不支持中文及特殊字符
-                    //     "name" : "张三",
-                    //     "portrait" : "http://rongcloud.cn/images/newVersion/log_wx.png"
-                    // },
-                    user: user,
-                    extra: "{\"key\":\"value\", \"key2\" : 12, \"key3\":true}"
+                var userInfo = {
+                    appKey: "{{ app_key }}",
+                    token: "{{ im_token }}"
                 };
-                var msg = new RongIMLib.TextMessage(content);
-                var start = new Date().getTime();
-                instance.sendMessage(conversationType, target_id, msg, {
-                    onSuccess: function (message) {
-                        // markMessage(message);
-                        console.log("发送文字消息 成功"+message+start);
+
+                var myInfo = {
+                    user_id: {{ my_info.user_id }},
+                    id: "{{ my_info.user_hash }}",
+                    name: "{{ my_info.username }}",
+                    portrait: "{{ my_info.avatar }}"
+                };
+
+                var callbacks = {
+                    Success: function(id){
+                        console.log("callbacks.Success: "+id);
                     },
-                    onError: function (errorCode,message) {
-                        console.log("发送文字消息 失败"+message+start);
+                    Received: function(message){
+                        console.log("callbacks.Recieved message.content: "+message.content.content);
+                        console.log(message);
+                        var content = message.content.content;
+                        var user_hash = message.senderUserId;
+                        var $user_hash = $("div[name="+user_hash+"]");
+                        var username = $user_hash.prop("id").substring(8);
+                        var portrait = $("#friends-"+username+" div img").prop("src");
+
+                        add_msg_item_left(username, portrait, content);
+                        scroll_top_is_height();
                     }
-                }, isMentioned, pushData);
-            }
+                };
 
-            $friends_label.click(function () {
-                // 点击我的朋友
-                $my_friends.slideToggle();
-                toggle_label($(this));
-            });
+                var instance = init(userInfo, callbacks);
 
-            $single_label.click(function () {
-                // 点击我的单向朋友
-                $my_single.slideToggle();
-                toggle_label($(this));
-            });
 
-            $blacks_label.click(function () {
-                // 点击我的黑名单
-                $my_blacks.slideToggle();
-                toggle_label($(this));
-            });
+                function init(userInfo,callbacks) {
+                    if (!userInfo.appKey || !userInfo.token){
+                        return false;
+                    }
 
-            $my_friends.delegate(".related-name", "click", function () {
-                // 给我的‘my-friends’列增加点击事件，点击之后聊天画面弹出，talk_to_user换成用户名
-                var username = $(this).prop("id").substring(8);
-                $history_msg.hide();
-                $("#" + username).show();
-                scroll_top_is_height();
-                change_talk_to_user(username);
-            });
+                    //公有云初始化
+                    RongIMLib.RongIMClient.init(userInfo.appKey);
+                    var instance = RongIMClient.getInstance();
 
-            $enter_button.click(function () {
-                // 给发送键一个点击事件
-                var content = $textarea_input.val();
-                if (content.replace("/[\r\ns]+/g", "")){
-                    var username = $talk_to_user.text();
-                    var user_hash = $("#friends-" + username).attr("name");
-                    sendTextMessage(content, myInfo, user_hash);
-                    $textarea_input.text("");
-                    add_msg_item_right(myInfo.name, myInfo.portrait, content);
-                    scroll_top_is_height();
+                    //连接状态监听器
+                    RongIMClient.setConnectionStatusListener({
+                        onChanged: function (status) {
+                            switch (status) {
+                                case RongIMLib.ConnectionStatus.CONNECTED:
+                                    console.log("链接成功 ");
+                                    callbacks.CONNECTED && callbacks.CONNECTED(instance);
+                                    break;
+                                case RongIMLib.ConnectionStatus.CONNECTING:
+                                    console.log('正在链接');
+                                    break;
+                                case RongIMLib.ConnectionStatus.DISCONNECTED:
+                                    console.log('断开连接');
+                                    break;
+                                case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
+                                    console.log('其他设备登录');
+                                    break;
+                                case RongIMLib.ConnectionStatus.DOMAIN_INCORRECT:
+                                    console.log('域名不正确');
+                                    break;
+                                case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
+                                    console.log('网络不可用');
+                                    break;
+                            }
+                        }
+                    });
+
+                    // 接收消息的回调
+                    RongIMClient.setOnReceiveMessageListener({
+                        // 接收到的消息
+                        onReceived: function (message) {
+                            callbacks.Received && callbacks.Received(message);
+                            // alert(message.content.content);
+                        }
+                    });
+
+
+                    //开始链接
+                    RongIMClient.connect(userInfo.token, {
+                        onSuccess: function (id) {
+                            callbacks.Success && callbacks.Success(id);
+                        },
+                        onTokenIncorrect: function () {
+                            console.log('token无效');
+                        },
+                        onError: function (errorCode) {
+                            var info = '';
+                            switch (errorCode) {
+                                case RongIMLib.ErrorCode.TIMEOUT:
+                                    info = '超时';
+                                    break;
+                                case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                                    info = '未知错误';
+                                    break;
+                                case RongIMLib.ErrorCode.UNACCEPTABLE_PaROTOCOL_VERSION:
+                                    info = '不可接受的协议版本';
+                                    break;
+                                case RongIMLib.ErrorCode.IDENTIFIER_REJECTED:
+                                    info = 'appkey不正确';
+                                    break;
+                                case RongIMLib.ErrorCode.SERVER_UNAVAILABLE:
+                                    info = '服务器不可用';
+                                    break;
+                            }
+                            console.log(info);
+                            alert(info)
+                        }
+                    });
+                    return instance;
                 }
-                make_textarea_input_blank();
-            });
 
-            $textarea_input.keyup(function (e) {
-                // 给发送键一个点击事件
-                if (!e.shiftKey && e.keyCode==13){
+                // 发送txt消息
+                function sendTextMessage(content1, user, target_id){
+                    /*
+                    文档： http://www.rongcloud.cn/docs/web.html#5_1、发送消息
+                        http://rongcloud.cn/docs/api/js/TextMessage.html
+                    1: 单条消息整体不得大于128K
+                    2: conversatinType 类型是 number，targetId 类型是 string
+                    */
+                    /*
+                        1、不要多端登陆，保证所有端都离线
+                        2、接收 push 设备设置:
+                            （1）打开系统通知提醒
+                            （2）小米设置 “授权管理” －> “自己的应用” 为自启动
+                            （3）应用内不要屏蔽新消息通知
+                        3、内置消息类型，默认 push，自定义消息类型需要
+                        pushData 显示逻辑顺序：自定义 > 默认
+                        4、发送其他消息类型与发送 TextMessage 逻辑、方式一致
+                    */
+                    var pushData = "pushData" + Date.now();
+                    var isMentioned = false;
+                    var content = {
+                        content: content1,
+                        // user : {
+                        //     "id" : "this-is-a-test-id",	//不支持中文及特殊字符
+                        //     "name" : "张三",
+                        //     "portrait" : "http://rongcloud.cn/images/newVersion/log_wx.png"
+                        // },
+                        user: user,
+                        extra: "{\"key\":\"value\", \"key2\" : 12, \"key3\":true}"
+                    };
+                    var msg = new RongIMLib.TextMessage(content);
+                    var start = new Date().getTime();
+                    instance.sendMessage(conversationType, target_id, msg, {
+                        onSuccess: function (message) {
+                            // markMessage(message);
+                            console.log("发送文字消息 成功"+message+start);
+                        },
+                        onError: function (errorCode,message) {
+                            console.log("发送文字消息 失败"+message+start);
+                        }
+                    }, isMentioned, pushData);
+                }
+
+                $friends_label.click(function () {
+                    // 点击我的朋友
+                    $my_friends.slideToggle();
+                    toggle_label($(this));
+                });
+
+                $single_label.click(function () {
+                    // 点击我的单向朋友
+                    $my_single.slideToggle();
+                    toggle_label($(this));
+                });
+
+                $blacks_label.click(function () {
+                    // 点击我的黑名单
+                    $my_blacks.slideToggle();
+                    toggle_label($(this));
+                });
+
+                $my_friends.delegate(".related-name", "click", function () {
+                    // 给我的‘my-friends’列增加点击事件，点击之后聊天画面弹出，talk_to_user换成用户名
+                    var username = $(this).prop("id").substring(8);
+                    $history_msg.hide();
+                    $("#" + username).show();
+                    scroll_top_is_height();
+                    change_talk_to_user(username);
+                });
+
+                $enter_button.click(function () {
+                    // 给发送键一个点击事件
                     var content = $textarea_input.val();
-                    if (content.replace("/(^s*)|(s*$)/g", "")){
+                    if (content.replace("/[\r\ns]+/g", "")){
                         var username = $talk_to_user.text();
                         var user_hash = $("#friends-" + username).attr("name");
                         sendTextMessage(content, myInfo, user_hash);
                         $textarea_input.text("");
                         add_msg_item_right(myInfo.name, myInfo.portrait, content);
                         scroll_top_is_height();
-{#                        make_textarea_input_blank();#}
                     }
                     make_textarea_input_blank();
-                }
-            });
+                });
 
-            $search_start.click(function(){
-                // 给搜索还有添加绑定事件,发送ajax请求
-                clear_search_user_result();
-                var url = "/uauth/users-list/";
-                var params = {"search": $search_user_input.val()};
-                $.get(url, params, function(data){
-                    if (data.length == 0){
-                        alert("无数据");
-                    } else {
-                        for (var i=0; i<data.length; i++){
-                            add_serach_user_result(data[i].username, data[i].user);
+                $textarea_input.keyup(function (e) {
+                    // 给发送键一个点击事件
+                    if (!e.shiftKey && e.keyCode==13){
+                        var content = $textarea_input.val();
+                        if (content.replace("/(^s*)|(s*$)/g", "")){
+                            var username = $talk_to_user.text();
+                            var user_hash = $("#friends-" + username).attr("name");
+                            sendTextMessage(content, myInfo, user_hash);
+                            $textarea_input.text("");
+                            add_msg_item_right(myInfo.name, myInfo.portrait, content);
+                            scroll_top_is_height();
+    {#                        make_textarea_input_blank();#}
                         }
+                        make_textarea_input_blank();
                     }
                 });
-            });
 
-            $search_user_input.keyup(function(e){
-                // 添加enter事件
-                if (e.keyCode == 13){
+                $search_start.click(function(){
+                    // 给搜索还有添加绑定事件,发送ajax请求
                     clear_search_user_result();
                     var url = "/uauth/users-list/";
                     var params = {"search": $search_user_input.val()};
@@ -274,130 +251,148 @@
                             }
                         }
                     });
-                }
-            });
+                });
 
-            $search_user_result.delegate(".search-user-name", "click", function(){
-                // 给选择好友的上级input下的span添加点击事件
-                if ($(this).prev()[0].checked){
-                    $(this).prev()[0].checked = false;
-                } else {
-                    $(this).prev()[0].checked = true;
-                }
-            });
-
-            $add_user_apply.click(function(){
-                console.log("into click...");
-                console.log($search_user_result.children("div").children("input").length);
-                $search_user_result.children("div").children("input").each(function(){
-
-                    if ($(this)[0].checked == true){
-                        var url = "/social/follows/";
-                        var data = {"to_user": parseInt($(this).prop("id")), "from_user": myInfo.user_id};
-                        console.log(url);
-                        console.log(data);
-                        $.ajax({
-                            url: url,
-                            data: JSON.stringify(data),
-                            type: 'post',
-                            dataType: 'json',
-                            contentType: 'application/json'
-                        }).done(function(){
-                            console.log("添加成功.");
-                        }).fail(function(){
-                            console.log("添加失败");
-                        })
+                $search_user_input.keyup(function(e){
+                    // 添加enter事件
+                    if (e.keyCode == 13){
+                        clear_search_user_result();
+                        var url = "/uauth/users-list/";
+                        var params = {"search": $search_user_input.val()};
+                        $.get(url, params, function(data){
+                            if (data.length == 0){
+                                alert("无数据");
+                            } else {
+                                for (var i=0; i<data.length; i++){
+                                    add_serach_user_result(data[i].username, data[i].user);
+                                }
+                            }
+                        });
                     }
-                })
-            });
+                });
 
-            $search_cancel.click(function(){
-                clear_search_user_result();
-            });
+                $search_user_result.delegate(".search-user-name", "click", function(){
+                    // 给选择好友的上级input下的span添加点击事件
+                    if ($(this).prev()[0].checked){
+                        $(this).prev()[0].checked = false;
+                    } else {
+                        $(this).prev()[0].checked = true;
+                    }
+                });
 
-            // 让滚动条直接放到该scroll的最后
-            scroll_top_is_height();
+                $add_user_apply.click(function(){
+                    console.log("into click...");
+                    console.log($search_user_result.children("div").children("input").length);
+                    $search_user_result.children("div").children("input").each(function(){
 
-            function make_textarea_input_blank(){
-                $textarea_input.val("");
-{#                $textarea_input.prop({"placeholder":"在输入让人"});#}
-            }
+                        if ($(this)[0].checked == true){
+                            var url = "/social/follows/";
+                            var data = {"to_user": parseInt($(this).prop("id")), "from_user": myInfo.user_id};
+                            console.log(url);
+                            console.log(data);
+                            $.ajax({
+                                url: url,
+                                data: JSON.stringify(data),
+                                type: 'post',
+                                dataType: 'json',
+                                contentType: 'application/json'
+                            }).done(function(){
+                                console.log("添加成功.");
+                            }).fail(function(){
+                                console.log("添加失败");
+                            })
+                        }
+                    })
+                });
 
-            function toggle_label(that) {
-                // 切换我的朋友列表的展示与隐藏
-                var str = that.text();
-                if (that.text().charAt(str.length - 1) === 'v') {
-                    that.text(str.substring(0, str.length - 1) + '>');
-                } else {
-                    that.text(str.substring(0, str.length - 1) + 'v');
+                $search_cancel.click(function(){
+                    clear_search_user_result();
+                });
+
+                // 让滚动条直接放到该scroll的最后
+                scroll_top_is_height();
+
+                function make_textarea_input_blank(){
+                    $textarea_input.val("");
+    {#                $textarea_input.prop({"placeholder":"在输入让人"});#}
                 }
-            }
 
-            function scroll_top_is_height() {
-                // 让滚动条直接滚动到该scroll的最后
-                $(".history-msg").each(function () {
-                    $(this)[0].scrollTop = $(this)[0].scrollHeight;
-                })
-            }
+                function toggle_label(that) {
+                    // 切换我的朋友列表的展示与隐藏
+                    var str = that.text();
+                    if (that.text().charAt(str.length - 1) === 'v') {
+                        that.text(str.substring(0, str.length - 1) + '>');
+                    } else {
+                        that.text(str.substring(0, str.length - 1) + 'v');
+                    }
+                }
 
-            function add_history_msg(username, content, img_url) {
-                // 在连天窗口添加一个针对该用户的聊天窗口
-                // var id_username = '<div class="history-msg" id=' + username + '><div class="msg-item"><div class="user-info"><div class="avatar-div">';
-                // var img_avatar = '<img src=/meida/' + img_url + ' alt="" class="personal-avatar"></div><strong class="personal-name">' + username + '</strong></div>';
-                // var send_content = '<div class="msg-info">' + content + '</div></div>';
+                function scroll_top_is_height() {
+                    // 让滚动条直接滚动到该scroll的最后
+                    $(".history-msg").each(function () {
+                        $(this)[0].scrollTop = $(this)[0].scrollHeight;
+                    })
+                }
 
-                var $html = $('<div class="history-msg" id=' + username + '></div>');
-                $community_window.append($html);
-            }
+                function add_history_msg(username, content, img_url) {
+                    // 在连天窗口添加一个针对该用户的聊天窗口
+                    // var id_username = '<div class="history-msg" id=' + username + '><div class="msg-item"><div class="user-info"><div class="avatar-div">';
+                    // var img_avatar = '<img src=/meida/' + img_url + ' alt="" class="personal-avatar"></div><strong class="personal-name">' + username + '</strong></div>';
+                    // var send_content = '<div class="msg-info">' + content + '</div></div>';
 
-            function add_msg_item_left(username, img_url, content) {
-                // 点击发送消息的时候，增加一个msg元素
-                var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div"><img src="' + img_url + '" alt="" class="personal-avatar"></div>';
-                var send_content = '<strong class="personal-name">' + username + '</strong></div><div class="msg-info">' + content + '</div></div>';
-                var $html = $(img_avatar + send_content);
-                $("#" + username).append($html);
-            }
+                    var $html = $('<div class="history-msg" id=' + username + '></div>');
+                    $community_window.append($html);
+                }
 
-            function add_msg_item_right(username, img_url, content) {
-                // 收到消息的时候，增加一个msg元素
-                var username2 = $talk_to_user.text();
-                var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div2"><img src="/media/' + img_url + '" alt="" class="personal-avatar"></div>';
-                var send_content = '<strong class="personal-name2">' + username + '&nbsp;</strong></div><div class="msg-info2">' + content + '</div></div>';
-                console.log(img_avatar);
-                console.log(send_content);
-                var $html = $(img_avatar + send_content);
-                console.log($html);
-                $("#" + username2).append($html);
-            }
+                function add_msg_item_left(username, img_url, content) {
+                    // 点击发送消息的时候，增加一个msg元素
+                    var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div"><img src="' + img_url + '" alt="" class="personal-avatar"></div>';
+                    var send_content = '<strong class="personal-name">' + username + '</strong></div><div class="msg-info">' + content + '</div></div>';
+                    var $html = $(img_avatar + send_content);
+                    $("#" + username).append($html);
+                }
 
-            function change_talk_user(username) {
-                // 更改聊天对象
-                $talk_to_user.text(username)
-            }
+                function add_msg_item_right(username, img_url, content) {
+                    // 收到消息的时候，增加一个msg元素
+                    var username2 = $talk_to_user.text();
+                    var img_avatar = '<div class="msg-item clearfix"><div class="user-info"><div class="avatar-div2"><img src="/media/' + img_url + '" alt="" class="personal-avatar"></div>';
+                    var send_content = '<strong class="personal-name2">' + username + '&nbsp;</strong></div><div class="msg-info2">' + content + '</div></div>';
+                    console.log(img_avatar);
+                    console.log(send_content);
+                    var $html = $(img_avatar + send_content);
+                    console.log($html);
+                    $("#" + username2).append($html);
+                }
 
-            function add_one_friend(username, img_url, user_hash) {
-                // 增加一个朋友行
-                var $html = '<div class="related-name" id="friends-' + username + '" name="' + user_hash + '"><div class="img-div"><img src="' + img_url + '" alt="" class="my-friends-img"></div>&nbsp;' + username + '</div>';
-                $my_friends.append($html);
-            }
+                function change_talk_user(username) {
+                    // 更改聊天对象
+                    $talk_to_user.text(username)
+                }
 
-            function change_talk_to_user(username) {
-                $talk_to_user.text(username);
-            }
+                function add_one_friend(username, img_url, user_hash) {
+                    // 增加一个朋友行
+                    var $html = '<div class="related-name" id="friends-' + username + '" name="' + user_hash + '"><div class="img-div"><img src="' + img_url + '" alt="" class="my-friends-img"></div>&nbsp;' + username + '</div>';
+                    $my_friends.append($html);
+                }
 
-            function add_serach_user_result(username, user_id){
-                var $html = $('<div class="search-user-result"><input type="checkbox" name="user" value="'+ username +'" class="select-user" id="'+ user_id +'"><span class="search-user-name">'+ username +'</span></div>');
-                $search_user_result.append($html);
-            }
+                function change_talk_to_user(username) {
+                    $talk_to_user.text(username);
+                }
 
-            function clear_search_user_result(){
-                // 清空搜索好友结果的数据
-                $search_user_result.empty();
-            }
-        })
-    </script>
-</head>
-<body>
+                function add_serach_user_result(username, user_id){
+                    var $html = $('<div class="search-user-result"><input type="checkbox" name="user" value="'+ username +'" class="select-user" id="'+ user_id +'"><span class="search-user-name">'+ username +'</span></div>');
+                    $search_user_result.append($html);
+                }
+
+                function clear_search_user_result(){
+                    // 清空搜索好友结果的数据
+                    $search_user_result.empty();
+                }
+            })
+        </script>
+    {% endblock head-js %}
+
+{% block body %}
     <!-- 标题 -->
     <h2 class="community-title">
         hello，欢迎来到猴赛雷通信，基于融云通信...
@@ -464,194 +459,196 @@
             </div>
         </div>
     </div>
-</body>
-<style>
-    /* 清除浮动 */
-    .clearfix:after,.clearfix:before{ content: "";display: table;}
-    .clearfix:after{ clear:both;}
-    .clearfix{zoom:1;}
+{% endblock body %}
 
-    /* 布局 */
-    .community-title{
-        color: green;
-        text-align: center;
-    }
-    .grey-line{
-        height: 3px;
-        background: #666;
-    }
-    .community-window{
-        width: 700px;
-        height: 570px;
-        border-width: 0 3px 3px 3px;
-        border-style: solid;
-        border-color: #666;
-        margin-left: 50%;
-        transform: translate(-50%, 0);
-        position: relative;
-    }
-    .history-msg-blank{
-        height: 432px;
-    }
-    .history-msg{
-        height: 432px;
-        width: 700px;
-        overflow: auto;
-        background: #bfd8f1;
-        position: absolute;
-        left: 0;
-        top: 0;
-        display: none;
-        /* scrollbar-base-color: rgb(236, 23, 23);
-        scrollbar-face-color: #010d18 */
-    }
+{% block head-css %}
+    <style>
+        /* 清除浮动 */
+        .clearfix:after,.clearfix:before{ content: "";display: table;}
+        .clearfix:after{ clear:both;}
+        .clearfix{zoom:1;}
 
-    /* 发送栏 */
-    .enter-line{
-        height: 30px;
-        line-height: 30px;
-    }
-    .enter-button{
-        height: 30px;
-        width: 48px;
-        font-size: 15px;
-        color: green;
-        padding-top: 0px; 
-        border-width: 0px 0px 0px 1px;
-        float: right;
-        outline: none;
-    }
-    .textarea-msg{
-        height: 100px;
-        width: 694px;
-        font-size: 15px;
-        border-width: 0px;
-        resize: none;
-        outline: none;
-    }
-    .search-add-user{
-        position: absolute;
-        left: -148px;
-        top: 0px;
-    }
-    .search-user-input{
-        display: block;
-        width: 140px;
-        height: 22px;
-        padding: 0px;
-        margin-left: 1px;
-        outline: none;
-    }
-    .search-button{
-        text-decoration:none;  
-        background:#2f435e;  
-        color:#f2f2f2;  
-        
-        padding: 3px 9px 3px 9px;  
-        font-size:12px;  
-        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
-        font-weight:bold;  
-        border-radius:3px;  
-        outline: none;
-        
-        -webkit-transition:all linear 0.30s;  
-        -moz-transition:all linear 0.30s;  
-        transition:all linear 0.30s;
-    }
+        /* 布局 */
+        .community-title{
+            color: green;
+            text-align: center;
+        }
+        .grey-line{
+            height: 3px;
+            background: #666;
+        }
+        .community-window{
+            width: 700px;
+            height: 570px;
+            border-width: 0 3px 3px 3px;
+            border-style: solid;
+            border-color: #666;
+            margin-left: 50%;
+            transform: translate(-50%, 0);
+            position: relative;
+        }
+        .history-msg-blank{
+            height: 432px;
+        }
+        .history-msg{
+            height: 432px;
+            width: 694px;
+            overflow: auto;
+            background: #cfe8f1;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            /* scrollbar-base-color: rgb(236, 23, 23);
+            scrollbar-face-color: #010d18 */
+        }
 
-    /* 好友块 */
-    .my-friends-line{
-        position: absolute;
-        right: -154px;
-        top: 0px;
-        width: 150px;
-        /* border: #666 solid; */
-        border-width: 0 1px 1px 0;
-    }
-    .my-friends-label, .my-single-friends-label, .my-blacks-label{
-        background:#2f435e;  
-        color:#f2f2f2;  
-        margin-top: 1px;
-        padding: 3px 9px 3px 9px;  
-        font-size:12px;  
-        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
-        font-weight:bold;  
-        border-radius:3px;  
-        outline: none;
-    }
-    .related-name{
-        background:#ccc;  
-        color:green;  
-        margin-top: 1px;
-        padding: 3px 9px 3px 9px;  
-        font-size:12px;  
-        font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;  
-        font-weight:bold;  
-        border-radius:3px;  
-    }
-    .img-div{
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        line-height: 10px;
-        display: inline-block;
-        overflow: hidden;
-        background: #fff;
-    }
-    .my-friends-img{
-        width: 10px;
-        vertical-align: middle;
-        margin: -1px 0 0 0;
-        padding: 0px;
-        font-size: 0px;
-        display: inline-block;
-    }
-    /* 个人通讯 */
-    .avatar-div, .avatar-div2{
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        line-height: 30px;
-        display: inline-block;
-        overflow: hidden;
-        background: #fff;
-    }
-    .personal-avatar, .personal-avatar2{
-        width: 30px;
-        /* margin: auto 0; */
-        /* margin: 0 auto; */
-        vertical-align: middle;
-        margin: -3px 0 0 0;
-        padding: 0px;
-        font-size: 0px;
-        display: inline-block;
-    }
-    .avatar-div2, .personal-name2{
-        float: right;
-    }
-    .personal-name, .personal-name2{
-        height: 30px;
-        display: inline-block;
-        vertical-align: middle;
-    }
-    .personal-name{
-        margin-top: -18px;
-        padding-left: 8px;
-    }
-    .user-info{
-        height: 30px;
-        font-size: 18px;
-        line-height: 30px;
-    }
-    .msg-info, .msg-info2{
-        width: 500px;
-        padding: 7px;
-        background: #596cd6;
-        border-radius: 4px;
-        margin: 5px 30px 10px 30px;
-    }
-    .msg-info2{
-        float: right;
-    }
-</style>
-</html>
+        /* 发送栏 */
+        .enter-line{
+            height: 30px;
+            line-height: 30px;
+        }
+        .enter-button{
+            height: 30px;
+            width: 48px;
+            font-size: 15px;
+            color: green;
+            padding-top: 0px;
+            border-width: 0px 0px 0px 1px;
+            float: right;
+            outline: none;
+        }
+        .textarea-msg{
+            height: 100px;
+            width: 694px;
+            font-size: 15px;
+            border-width: 0px;
+            resize: none;
+            outline: none;
+        }
+        .search-add-user{
+            position: absolute;
+            left: -148px;
+            top: 0px;
+        }
+        .search-user-input{
+            display: block;
+            width: 140px;
+            height: 22px;
+            padding: 0px;
+            margin-left: 1px;
+            outline: none;
+        }
+        .search-button{
+            text-decoration:none;
+            background:#2f435e;
+            color:#f2f2f2;
+
+            padding: 3px 9px 3px 9px;
+            font-size:12px;
+            font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;
+            font-weight:bold;
+            border-radius:3px;
+            outline: none;
+
+            -webkit-transition:all linear 0.30s;
+            -moz-transition:all linear 0.30s;
+            transition:all linear 0.30s;
+        }
+
+        /* 好友块 */
+        .my-friends-line{
+            position: absolute;
+            right: -154px;
+            top: 0px;
+            width: 150px;
+            /* border: #666 solid; */
+            border-width: 0 1px 1px 0;
+        }
+        .my-friends-label, .my-single-friends-label, .my-blacks-label{
+            background:#2f435e;
+            color:#f2f2f2;
+            margin-top: 1px;
+            padding: 3px 9px 3px 9px;
+            font-size:12px;
+            font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;
+            font-weight:bold;
+            border-radius:3px;
+            outline: none;
+        }
+        .related-name{
+            background:#ccc;
+            color:green;
+            margin-top: 1px;
+            padding: 3px 9px 3px 9px;
+            font-size:12px;
+            font-family: 微软雅黑,宋体,Arial,Helvetica,Verdana,sans-serif;
+            font-weight:bold;
+            border-radius:3px;
+        }
+        .img-div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            line-height: 10px;
+            display: inline-block;
+            overflow: hidden;
+            background: #fff;
+        }
+        .my-friends-img{
+            width: 10px;
+            vertical-align: middle;
+            margin: -1px 0 0 0;
+            padding: 0px;
+            font-size: 0px;
+            display: inline-block;
+        }
+        /* 个人通讯 */
+        .avatar-div, .avatar-div2{
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            line-height: 30px;
+            display: inline-block;
+            overflow: hidden;
+            background: #fff;
+        }
+        .personal-avatar, .personal-avatar2{
+            width: 30px;
+            /* margin: auto 0; */
+            /* margin: 0 auto; */
+            vertical-align: middle;
+            margin: -3px 0 0 0;
+            padding: 0px;
+            font-size: 0px;
+            display: inline-block;
+        }
+        .avatar-div2, .personal-name2{
+            float: right;
+        }
+        .personal-name, .personal-name2{
+            height: 30px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .personal-name{
+            margin-top: -18px;
+            padding-left: 8px;
+        }
+        .user-info{
+            height: 30px;
+            font-size: 18px;
+            line-height: 30px;
+        }
+        .msg-info, .msg-info2{
+            width: 500px;
+            padding: 7px;
+            background: #899ce6;
+            border-radius: 4px;
+            margin: 5px 30px 10px 30px;
+        }
+        .msg-info2{
+            float: right;
+        }
+    </style>
+{% endblock head-css %}

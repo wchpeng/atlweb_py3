@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+
+    {% block head-css %}{% endblock head-css %}
+    {% block head-js %}{% endblock head-js %}
+    {% block other %}{% endblock other %}
+
+    <title>{% block title %}base_html{% endblock title %}</title>
+</head>
+
+<body>
+    {% block body %}
+    {% endblock body %}
+
+    {% block body-bottom %}
+        <!-- 底部信息 -->
+        <div class="jumbotron" style="margin-top:40px;">
+            <div class="text-center">
+                <a href="javascript:">关于我们</a>
+                <span style="margin-left:8px;margin-right:8px;">|</span>
+                <a href="javascript:">魑魅魍魉</a>
+                <span style="margin-left:8px;margin-right:8px;">|</span>
+                <a href="javascript:">忠犬罢工</a>
+                <span style="margin-left:8px;margin-right:8px;">|</span>
+                <a href="javascript:">人与自然</a>
+                <span style="margin-left:8px;margin-right:8px;">|</span>
+                <a href="javascript:">粤网文[2222]9527号</a>
+            </div>
+            <div class="text-center">
+                Copyright © 2018 - 2018 Monkey.All Rights Reserved.
+            </div>
+            <div class="text-center">
+                不可知之地 版权所有
+            </div>
+        </div>
+    {% endblock body-bottom %}
+</body>
+</html>

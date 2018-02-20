@@ -11,14 +11,14 @@ class AlbumListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ("id", "brief", "add_date")
+        fields = ("id", "name", "brief", "add_date")
 
 
 class AlbumDetailSerializer(serializers.ModelSerializer):
     """图册详情"""
     class Meta:
         model = Album
-        fields = ("id", "brief", "pictures", "add_date")
+        fields = ("id", "name", "brief", "pictures", "add_date")
 
 
 class PictureSerializer(serializers.ModelSerializer):

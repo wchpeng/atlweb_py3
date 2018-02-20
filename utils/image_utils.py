@@ -26,6 +26,17 @@ def transform_datetime_to_timestamp(data):
             temp["mod_date"] = time.mktime(temp["mod_date"].timetuple())
 
 
+def mod_dict_key(data):
+    """主要用于把albums中的数据的album_id换为id, 把album__add_date变为add_date"""
+    for temp in data:
+        if "album_id" in temp:
+            temp["id"] = temp["album_id"]
+            del temp["album_id"]
+        if "album_add_date" in temp:
+            temp["add_date"] = temp["album__add_date"]
+            del temp["album__add_date"]
+
+
 def handle_upload_pic(pic):
     """处理上传的图片，使他成为一个正方形"""
     im_pic = Image.open(pic)

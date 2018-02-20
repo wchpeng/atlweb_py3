@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 # from django_thumbs.db.models import ImageWithThumbsField
 
+from utils.image_utils import picture_upload_path, transform_datetime_to_timestamp, mod_dict_key
 from db.base_model import BaseModel
-from utils.image_utils import picture_upload_path
 
 
 class Picture(BaseModel):
@@ -27,6 +27,9 @@ class Album(BaseModel):
     def __str__(self):
         return "{} {}".format(self.id, self.name)
 
+    class Meta:
+        ordering = ("-add_date",)
+
 
 class FavoriteAlbum(BaseModel):
     """收藏相册"""
@@ -37,6 +40,7 @@ class FavoriteAlbum(BaseModel):
         return "{} {}".format(self.user.userinfo.username, self.album.name)
 
     class Meta:
+        ordering = ("-add_date",)
         unique_together = (("user", "album"),)
 
 
@@ -68,3 +72,150 @@ def album_review_count(data):
     for temp in data:
         a_r_c = Review.objects.filter(album_id=temp["id"]).count()
         temp["review_count"] = a_r_c
+
+
+def album_pic_count(data):
+    """给data中添加图册的图片数量"""
+    for temp in data:
+        p_c = Album.objects.get(id=temp["id"]).pictures.count()
+        temp["pic_count"] = p_c
+
+
+def get_albums_data_index(**kwargs):
+    """通过一些条件**kwargs来求取albums数据 主页专用"""
+    data = Album.objects.filter(visible=True, **kwargs).order_by("-add_date").select_related("user__userinfo").\
+        annotate(username=models.F("user__userinfo__username")).values("id", "username", "name", "brief", "add_date")
+    transform_datetime_to_timestamp(data)
+    # 增加第一张图片，如果没有就给一张默认值
+    qs2 = Album.objects.filter(visible=True, **kwargs).order_by("-add_date").prefetch_related("pictures")
+    for i, q in enumerate(qs2):
+        pic = q.pictures.first()
+        if pic:
+            data[i]["first_pic"] = pic.picture.name
+        else:
+            data[i]["first_pic"] = "default_album.png"
+
+    album_review_count(data)
+    album_favorite_count(data)
+
+    return list(data)
+
+
+def get_albums_data_search_index(keyword):
+    """通过一些条件**kwargs来求取albums数据 主页专用"""
+    data = Album.objects.filter(models.Q(name__icontains=keyword) | models.Q(brief__icontains=keyword), visible=True)\
+        .order_by("-add_date").select_related("user__userinfo")\
+        .annotate(username=models.F("user__userinfo__username")).values("id", "username", "name", "brief", "add_date")
+    transform_datetime_to_timestamp(data)
+    # 增加第一张图片，如果没有就给一张默认值
+    qs2 = Album.objects.filter(models.Q(name__icontains=keyword) | models.Q(brief__icontains=keyword), visible=True)\
+        .order_by("-add_date").prefetch_related("pictures")
+    for i, q in enumerate(qs2):
+        pic = q.pictures.first()
+        if pic:
+            data[i]["first_pic"] = pic.picture.name
+        else:
+            data[i]["first_pic"] = "default_album.png"
+
+    album_review_count(data)
+    album_favorite_count(data)
+
+    return list(data)
+
+
+def get_favorite_albums_data_index(user_id):
+    """通过一些条件**kwargs来求取albums数据 主页专用"""
+    data = FavoriteAlbum.objects.filter(visible=True, user_id=user_id).order_by("-add_date").\
+        select_related("album", "album__user__userinfo"). \
+        annotate(
+            username=models.F("album__user__userinfo__username"),
+            name=models.F("album__name"),
+            brief=models.F("album__brief"),
+        ).values("album_id", "username", "name", "brief", "album__add_date")
+    mod_dict_key(data)
+    transform_datetime_to_timestamp(data)
+    # 增加第一张图片，如果没有就给一张默认值
+    qs2 = FavoriteAlbum.objects.filter(visible=True, user_id=user_id).order_by("-add_date").prefetch_related("album__pictures")
+    for i, q in enumerate(qs2):
+        pic = q.album.pictures.first()
+        if pic:
+            data[i]["first_pic"] = pic.picture.name
+        else:
+            data[i]["first_pic"] = "default_album.png"
+
+    album_review_count(data)
+    album_favorite_count(data)
+
+    return list(data)
+
+
+def get_albums_data_info(**kwargs):
+    """通过一些条件**kwargs来求取albums数据 专门让info页使用"""
+    data = Album.objects.filter(visible=True, **kwargs).order_by("-add_date").select_related("user__userinfo").\
+        annotate(username=models.F("user__userinfo__username")).values("id", "username", "name", "brief")
+    transform_datetime_to_timestamp(data)
+    # 增加第一张图片，如果没有就给一张默认值
+    qs2 = Album.objects.filter(visible=True, **kwargs).order_by("-add_date").prefetch_related("pictures")
+    for i, q in enumerate(qs2):
+        pic = q.pictures.first()
+        if pic:
+            data[i]["first_pic"] = pic.picture.name
+        else:
+            data[i]["first_pic"] = "default_album.png"
+
+    album_pic_count(data)
+    album_favorite_count(data)
+
+    return list(data)
+
+
+def get_favorite_albums_data_info(user_id):
+    """通过一些条件**kwargs来求取albums数据 专门让info页使用"""
+    data = FavoriteAlbum.objects.filter(visible=True, user_id=user_id).order_by("-add_date").\
+        select_related("album", "album__user__userinfo"). \
+        annotate(
+            username=models.F("album__user__userinfo__username"),
+            name=models.F("album__name"),
+            brief=models.F("album__brief"),
+        ).values("album_id", "username", "name", "brief")
+    mod_dict_key(data)
+    transform_datetime_to_timestamp(data)
+    # 增加第一张图片，如果没有就给一张默认值
+    qs2 = FavoriteAlbum.objects.filter(visible=True, user_id=user_id).order_by("-add_date").prefetch_related("album__pictures")
+    for i, q in enumerate(qs2):
+        pic = q.album.pictures.first()
+        if pic:
+            data[i]["first_pic"] = pic.picture.name
+        else:
+            data[i]["first_pic"] = "default_album.png"
+
+    album_pic_count(data)
+    album_favorite_count(data)
+
+    return list(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def get_albums_count(user_id):
+    """获取某用户id，他的相册数量"""
+    return Album.objects.filter(visible=True, user_id=user_id).count()

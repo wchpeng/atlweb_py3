@@ -28,3 +28,26 @@ class BlackUser(BaseModel):
     class Meta:
         unique_together = (("from_user", "to_user"),)
         ordering = ("-id",)
+
+
+# 自己写的几个函数
+def follow_count(user_id):
+    """我关注的人的数量"""
+    return FollowUser.objects.filter(visible=True, from_user_id=user_id).count()
+
+
+def followed_count(user_id):
+    """关注我的人的数量"""
+    return FollowUser.objects.filter(visible=True, to_user_id=user_id).count()
+
+
+def black_count(user_id):
+    """我拉黑的人的数量"""
+    return BlackUser.objects.filter(visible=True, from_user_id=user_id).count()
+
+
+def blacked_count(user_id):
+    """拉黑我的人的数量"""
+    return BlackUser.objects.filter(visible=True, to_user_id=user_id).count()
+
+

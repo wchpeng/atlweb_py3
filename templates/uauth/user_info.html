@@ -1,0 +1,227 @@
+{% extends "base_uauth_info.html" %}
+
+
+{% block head-css %}
+    <link rel="stylesheet" href="/static/css/my_info.css">
+{% endblock head-css %}
+
+{% block head-js %}
+    <script>
+        $(function(){
+            var $add_pic = $("#add-pic");
+            var $add_album = $("#add-album");
+            var $black_tent = $("#black-tent");
+            var $add_album_no = $("#add-album-no");
+            var $add_album_div = $("#add-album-div");
+            var $add_album_yes = $("#add-album-yes");
+            var $input_name = $("#inputName");
+            var $input_describe = $("#inputDescribe");
+            var $row1 = $("#row1");
+            var $row2 = $("#row2");
+            var $my_albums = $("#my-albums");
+            var $my_favorite = $("#my-favorite");
+
+            var is_name_valid = false;
+            var is_brief_valid = false;
+
+            // 切换我的收藏和我的相册
+            $my_albums.click(function(){
+                $row1.show();
+                $row2.hide();
+                $(this).addClass("active");
+                $my_favorite.removeClass("active");
+            });
+            $my_favorite.click(function(){
+                $row2.show();
+                $row1.hide();
+                $(this).addClass("active");
+                $my_albums.removeClass("active");
+            });
+
+            // 判断输入的名字和描述是否合法
+            $input_name.blur(function(){
+                var name = $(this).val();
+                if (name.length<15 && name != ""){
+                    is_name_valid = true;
+                } else {
+                    alert("名字不符合规范！")
+                }
+            });
+            $input_describe.blur(function(){
+                var brief = $(this).val();
+                if (brief.length<64){
+                    is_brief_valid = true;
+                }
+            });
+
+            // 添加我的图册
+            $add_album.click(function(){
+                $black_tent.show();
+                $add_album_div.show();
+            });
+            $add_album_yes.click(function(){
+                var name = $input_name.val();
+                var brief = $input_describe.val();
+                if (is_name_valid && is_brief_valid){
+                    var data = {"name": name.replace(" ", ""), "brief": brief};
+                    alert(data);
+                    console.log(data);
+                    var url = "/image/album-mod/";
+                    $.post(url, JSON.stringify(data), function(data){
+                        if (data.name == name){
+                            alert("成功了");
+                            location.reload();
+                        } else {
+                            return false;
+                        }
+                    });
+                    $black_tent.hide();
+                    $add_album_div.hide();
+                }
+            });
+            $add_album_no.click(function(){
+                $black_tent.hide();
+                $add_album_div.hide();
+            });
+
+            // 添加图片
+
+            // 增加一个相册
+            function add_one_album(img_url, content){
+                var $html = $('<div class="col-md-3 col-sm-4">\
+                                <a href="#" class="thumbnail">\
+                                    <img src="' + img_url + '" alt="" class="img-responsive">\
+                                    <p>' + content + '</p>\
+                                </a>\
+                            </div>');
+                $row1.append($html);
+            }
+        })
+
+    </script>
+{% endblock head-js %}
+
+{% block title %}my-info{% endblock title %}
+
+{% block body %}
+    <!-- 创建相册 -->
+
+    <div id="add-album-div" class="container">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+                <div class="album-form">
+                    <div class="grey-line">创建相册</div>
+                    <div class="create-album-form">
+                        <form class="form-horizontal" action="/image/album-mod/" method="post">
+                            <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">相册名字:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputName" name="name" placeholder="相册名字(15个字以下)">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputDescribe" class="col-sm-2 control-label">相册描述:</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="inputDescribe" name="brief" placeholder="相册描述(64个字以下)"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="auth" class="col-sm-2 control-label">权限:</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="auth" name="auth">
+                                        <option>全部可见</option>
+                                        <option>只有我可见</option>
+                                        <option>我的朋友可见</option>
+                                    </select>
+                                </div>
+                            </div>  
+                        </form>
+                    </div>
+                    <div class="grey-line">
+                        <p style="position:relative">
+                            <button type="submit" id="add-album-yes" class="btn btn-primary btn-md result-button" style="right:80px">确定</button>
+                            <button type="button" id="add-album-no" class="btn btn-default btn-md result-button">取消</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- // 头像+基本信息 -->
+        <ul class="nav nav-pills nav-justified" style="margin-top:20px;">
+            <li role="presentation" class="active"><a href="javascript:">Home</a></li>
+            <li role="presentation"><a href="#">his info</a></li>
+            <li role="presentation"><a href="#">Messages</a></li>
+            <li class="text-right">
+                <div class="dropdown">
+                    <div class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border:none;">
+                        <span class="glyphicon glyphicon-plus" style="font-size:20px;padding-top:10px;"></span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+                        <li id="add-pic"><a href="javascript:">添加图片</a></li>
+                        <li id="add-album"><a href="javascript:">添加相册</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+        <hr>
+        <div class="row">
+            <div class="col-sm-4">
+                <img src="/static/img/5.jpg" class="img-responsive img-circle img-avatar" alt="">
+            </div>
+            <div class="col-sm-8 my-info">
+                <div class="username">{{ user_info.username }}&nbsp;<span class="glyphicon glyphicon-certificate" style="color:#337ab7"></span></div>
+                <div class="follow"><span class="follow-span">{{ user_info.albums_count }}帖子</span><span class="follow-span">{{ user_info.follow }}关注</span><span class="follow-span">{{ user_info.followed }}关注者</span></div>
+                <div class="signature">
+                    {{ user_info.signature }}
+                </div>
+            </div>
+        </div>
+
+        {% if owner %}
+            <!-- // 相册信息 -->
+            <ul class="nav nav-tabs nav-justified" style="margin-bottom:20px;">
+                <li role="presentation" id="my-albums" class="active"><a href="javascript:">我的相册</a></li>
+                <li role="presentation" id="my-favorite"><a href="javascript:">我的收藏</a></li>
+            </ul>
+        {% endif %}
+
+{#        我的相册#}
+        <div class="row" id="row1">
+
+            {% for album in albums_data %}
+                <div class="col-md-3 col-sm-4">
+                    <a href="/image/album-page/{{ album.username }}/{{ album.id }}/" class="thumbnail">
+                        <img src="/media/{{ album.first_pic }}" alt="" class="img-responsive">
+                        <p>{{ album.brief|truncatechars:20 }}</p>
+                        <div><span class="glyphicon glyphicon-picture"></span>&nbsp;{{ album.pic_count }}&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;{{ album.favorite_count }}</div>
+                    </a>
+                </div>
+            {% empty %}
+            {% endfor %}
+
+        </div>
+
+{#        我的收藏#}
+        <div class="row" id="row2" style="display:none;">
+            {% if owner %}
+                {% for fav_album in fav_albums_data %}
+                    <div class="col-md-3 col-sm-4">
+                        <a href="/image/album-page/{{ fav_album.username }}/{{ fav_album.id }}/" class="thumbnail">
+                            <img src="/media/{{ fav_album.first_pic }}" alt="" class="img-responsive">
+                            <p>c腾...</p>
+                            <div><span class="glyphicon glyphicon-picture"></span>&nbsp;{{ fav_album.pic_count }}&nbsp;&nbsp;<span class="glyphicon glyphicon-heart"></span>&nbsp;{{ fav_album.favorite_count }}</div>
+                        </a>
+                    </div>
+                {% empty %}
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <button type="button" class="btn btn-success btn-block load-more">加载更多.. .</button>
+    </div>
+    <!-- // 黑蒙版 -->
+    <div id="black-tent"></div>
+{% endblock body %}

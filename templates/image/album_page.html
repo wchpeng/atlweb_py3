@@ -43,7 +43,7 @@
                             <select id="select-album" name="album">
 
                                 {% for q in qs %}
-                                    {% if q.id == album_id %}
+                                    {% if q.id == current_album.id %}
                                         <option selected="selected" value="{{ q.id }}">{{ q.name }}</option>
                                     {% else %}
                                         <option value="{{ q.id }}">{{ q.name }}</option>
@@ -84,6 +84,7 @@
     <hr>
     <div class="container">
         <div class="row">
+
             {% for pic in album_pictures%}
             <div class="col-sm-4 col-md-3">
                 <a href="" class="thumbnail">
@@ -93,6 +94,7 @@
             </div>
             {% empty %}
             {% endfor %}
+
         </div>
     </div>
 
