@@ -52,6 +52,10 @@ def handle_upload_pic(pic):
         box = (0, h_start, w, h_start+w)
         region = im_pic.crop(box)
 
+    # 放大到350*350
+    if region.size[0] < 350:
+        region = region.thumbnail((350, 350))
+
     region_io = BytesIO()
     region.save(region_io, format=im_pic.format)
     # pic_file = ContentFile(region_io.getvalue())

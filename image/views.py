@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import permissions, mixins, generics, viewsets, filters, status
 from rest_framework.response import Response
 from django_filters import rest_framework
@@ -87,6 +87,7 @@ def upload_pic(request):
     album_id = request.POST.get("album", "")
     brief = request.POST.get("brief", "")
     album = Album.objects.get(id=album_id)
+    path = request.POST.get("current_path", "")
 
     if not album_id:
         return JsonResponse({"detail": "id缺失"})
@@ -98,9 +99,11 @@ def upload_pic(request):
             picture=pic,
             user=request.user
         )
+        p.save()
         album.pictures.add(p)
-
-    return JsonResponse({"detail": pic.id})
+        # return
+        return redirect(path)
+    # return JsonResponse({"detail": "error"})
 
 
 def album_detail_page(request, username, album_id):
@@ -108,8 +111,17 @@ def album_detail_page(request, username, album_id):
     # user = User.objects.get(id=user_id)
     album = Album.objects.get(id=album_id)
     qs = Album.objects.filter(user=user).only("id", "name")
+    path = request.get_full_path()
     if user.id == request.user.id:
         owner = True
     else:
         owner = False
-    return render(request, "image/album_page.html", {"qs": qs, "owner": owner, "current_album": album, "album_pictures": album.pictures.all()})
+
+    ret = {
+        "qs": qs,
+        "current_path": path,
+        "owner": owner,
+        "current_album": album,
+        "album_pictures": album.pictures.all()
+    }
+    return render(request, "image/album_page.html", ret)

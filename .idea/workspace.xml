@@ -2,19 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e1113fd-49f6-4b95-9a69-159143c30c13" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media/avatar/avatar.jpg" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/2e59b2de4839b2a3849eac178cf6173304fe4f1e.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/2e59b2de4839b2a3849eac178cf6173304fe4f1e.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/60cc5c18240cd40af9bc28773c4af20041dc4a16.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/60cc5c18240cd40af9bc28773c4af20041dc4a16.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/8935f33d3e1c7682d9465aab6e98cf961f5142f0.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/8935f33d3e1c7682d9465aab6e98cf961f5142f0.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/9d1b9c36e65c248bdfd0cacefe466b1e0650765d.jpeg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/9d1b9c36e65c248bdfd0cacefe466b1e0650765d.jpeg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/a4a1697251f217911b0a5d9464e28ee785d3f9a5.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/a4a1697251f217911b0a5d9464e28ee785d3f9a5.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/bb1e333ca5aa27a6a69203b91e4615eea64855ae.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/bb1e333ca5aa27a6a69203b91e4615eea64855ae.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/d71328accb6eb54eead16c22607e48f7f9e99e19.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/d71328accb6eb54eead16c22607e48f7f9e99e19.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/e7fe79f16cf0ac3571d94dbb92dd0f80b776a84d.jpg" afterPath="$PROJECT_DIR$/media/ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4/albums/我的相册/e7fe79f16cf0ac3571d94dbb92dd0f80b776a84d.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/default_album.png" afterPath="$PROJECT_DIR$/media/default_album.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/default_avatar.png" afterPath="$PROJECT_DIR$/media/default_avatar.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/uauth/user_info.html" afterPath="$PROJECT_DIR$/templates/uauth/user_info.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/image/views.py" afterPath="$PROJECT_DIR$/image/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/image/album_page.html" afterPath="$PROJECT_DIR$/templates/image/album_page.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils/image_utils.py" afterPath="$PROJECT_DIR$/utils/image_utils.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -47,10 +37,60 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="default_album.png" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/media/default_album.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/image/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="90" column="0" lean-forward="true" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#45#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shortcuts.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django_py3/lib/python3.5/site-packages/django/shortcuts.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="39" column="14" lean-forward="false" selection-start-line="39" selection-start-column="14" selection-end-line="39" selection-end-column="14" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="image_utils.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/image_utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user_info.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/uauth/user_info.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="206" column="0" lean-forward="true" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+              <folding>
+                <element signature="n#style#0;n#ul#1;n#div#1;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="album_page.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/image/album_page.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="440">
+              <caret line="96" column="33" lean-forward="false" selection-start-line="96" selection-start-column="33" selection-end-line="96" selection-end-column="33" />
+              <folding>
+                <element signature="n#style#0;n#span#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
           </provider>
         </entry>
       </file>
@@ -110,10 +150,8 @@
         <option value="$USER_HOME$/.virtualenvs/django_py3/lib/python3.5/site-packages/django_thumbs/db/models.py" />
         <option value="$PROJECT_DIR$/image/templatetags/filters.py" />
         <option value="$PROJECT_DIR$/social/models.py" />
-        <option value="$PROJECT_DIR$/utils/image_utils.py" />
         <option value="$PROJECT_DIR$/templates/uauth/my_info.html" />
         <option value="$PROJECT_DIR$/static/css/my_info.css" />
-        <option value="$PROJECT_DIR$/templates/image/album_page.html" />
         <option value="$PROJECT_DIR$/static/css/index.css" />
         <option value="$PROJECT_DIR$/templates/image/search-index.html" />
         <option value="$PROJECT_DIR$/image/models.py" />
@@ -128,8 +166,10 @@
         <option value="$PROJECT_DIR$/uauth/views.py" />
         <option value="$PROJECT_DIR$/templates/uauth/login.html" />
         <option value="$PROJECT_DIR$/image/serializers.py" />
-        <option value="$PROJECT_DIR$/image/views.py" />
         <option value="$PROJECT_DIR$/templates/uauth/user_info.html" />
+        <option value="$PROJECT_DIR$/utils/image_utils.py" />
+        <option value="$PROJECT_DIR$/image/views.py" />
+        <option value="$PROJECT_DIR$/templates/image/album_page.html" />
       </list>
     </option>
   </component>
@@ -246,25 +286,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="media" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="atlweb_py3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="atlweb_py3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="media" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4" />
+              <option name="myItemId" value="image" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -641,9 +663,9 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.32859176" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2617354" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36235595" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3598862" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.253365" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31721196" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11522049" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -667,14 +689,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.virtualenvs/django_py3/lib/python3.5/site-packages/django_thumbs/db/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="35" lean-forward="false" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/image/templatetags/filters.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -753,16 +767,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/image_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="38" column="0" lean-forward="true" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#11#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/social/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="392">
@@ -783,14 +787,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
           <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/image/album_page.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="98" column="10" lean-forward="true" selection-start-line="98" selection-start-column="10" selection-end-line="98" selection-end-column="10" />
           <folding />
         </state>
       </provider>
@@ -913,16 +909,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/image/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="43" column="18" lean-forward="false" selection-start-line="43" selection-start-column="18" selection-end-line="43" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/uauth/login1.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -978,14 +964,6 @@
     <entry file="file://$PROJECT_DIR$/media/banner/login/green.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/uauth/user_info.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1429">
-          <caret line="117" column="32" lean-forward="true" selection-start-line="117" selection-start-column="32" selection-end-line="117" selection-end-column="32" />
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/media/default_avatar.png">
@@ -1044,6 +1022,53 @@
     <entry file="file://$PROJECT_DIR$/media/default_album.png">
       <provider selected="true" editor-type-id="images">
         <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/uauth/user_info.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="206" column="0" lean-forward="true" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#ul#1;n#div#1;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/image_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django_py3/lib/python3.5/site-packages/django/shortcuts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="39" column="14" lean-forward="false" selection-start-line="39" selection-start-column="14" selection-end-line="39" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/image/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="90" column="0" lean-forward="true" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/image/album_page.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="96" column="33" lean-forward="false" selection-start-line="96" selection-start-column="33" selection-end-line="96" selection-end-column="33" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>

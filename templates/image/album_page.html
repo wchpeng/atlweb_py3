@@ -37,7 +37,8 @@
             <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
                 <div class="upload-content">
                     <form action="/image/upload-pic/" method="post" enctype="multipart/form-data">
-
+                        {% csrf_token %}
+                        <input type="hidden" name="current_path" value="{{ current_path }}">
                         <div class="upload-title">上传图片 - 普通上传<span id="remove-pic-div" class="glyphicon glyphicon-remove" style="float:right;line-height:35px;"></span></div>
                         <div class="upload-small">相册
                             <select id="select-album" name="album">
@@ -60,10 +61,11 @@
                         </div>
                         <div class="upload-button text-center">
                             <!-- <button id="upload-btn" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-picture"></span><input type="file" name="person_pic"></button> -->
-                            <button id="upload-btn" class="btn btn-default"><input type="file" name="picture"></button>
+{#                            <button id="upload-btn" class="btn btn-default"><input type="file" name="picture"></button>#}
+                            <input type="file" name="picture">
                             <input type="submit" value="提交" class="upload-submit btn">
                         </div>
-                
+
                     </form>
                 </div>
             </div>
@@ -89,7 +91,11 @@
             <div class="col-sm-4 col-md-3">
                 <a href="" class="thumbnail">
                     <img src="/media/{{ pic.picture.name }}" alt="" class="img-responsive">
-                    <div>{{ pic.brief }}</div>
+                    {% if pic.brief %}
+                        <div>{{ pic.brief|ljust:10 }}</div>
+                    {% else %}
+                        <div>null</div>
+                    {% endif %}
                 </a>
             </div>
             {% empty %}
