@@ -24,7 +24,7 @@ from social.models import followed_count, follow_count
 @require_http_methods(["GET", "POST"])
 def log_in(request):
     if request.method == "GET":
-        return render(request, "uauth/login.html")
+        return render(request, "uauth/login.html", {"error": False})
     else:
         username = request.POST.get("username", "")
         password = request.POST.get("password", "")
@@ -34,7 +34,7 @@ def log_in(request):
             # request.session.set_expiry(300)
             messages.info(request, "登陆")
             return redirect(index)
-        return render(request, "uauth/login.html", {"detail": "账号或密码错误"})
+        return render(request, "uauth/login.html", {"error": True, "detail": "账号或密码错误"})
 
 
 # 注册
@@ -66,10 +66,24 @@ def log_out(request):
     return redirect("/uauth/login/")
 
 
+# 登陆后首页
 @login_required(login_url="/uauth/login")
 def index(request):
     # print(request.session["_auth_user_id"])
     return render(request, "uauth/index.html")
+
+
+# 判断用户名和email是否存在
+def exist_username_email(request):
+    kwargs = dict(request.GET)
+    for i in kwargs.keys():
+        kwargs[i] = kwargs[i][0]
+    try:
+        models.User.objects.get(**kwargs)
+    except models.User.DoesNotExist:
+        return JsonResponse({"error": False})
+    else:
+        return JsonResponse({"error": True})
 
 
 # 测试发送邮件

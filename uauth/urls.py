@@ -10,14 +10,15 @@ router.register(r"users-list", views.UserInfoList)
 router.register(r"users-detail", views.UserInfoDetail)
 
 urlpatterns = [
-    url(r'^$', views.index),
-    url(r'^login/$', views.log_in),
-    url(r'^logout/$', views.log_out),
-    url(r'^register/$', views.register),
-    url(r'^auth-token/$', obtain_auth_token),
-    url(r'^send-email/$', views.test_send_email),
-    url(r"^my-info-page/$", views.my_info_page),
-    url(r"^his-info-page/(.+?)/$", views.his_info_page),
+    url(r'^$', views.index),                                      # 登陆后主页
+    url(r'^login/$', views.log_in),                               # 登陆页面
+    url(r'^logout/$', views.log_out),                             # 登出
+    url(r'^register/$', views.register),                          # 注册
+    url(r'^auth-token/$', obtain_auth_token),                     # 获取token
+    url(r'^send-email/$', views.test_send_email),                 # 发送邮件（测试）
+    url(r"^my-info-page/$", views.my_info_page),                  # 我的信息页
+    url(r"^his-info-page/(.+?)/$", views.his_info_page),          # 别人的信息页
+    url(r"^exist-username-email/$", views.exist_username_email),  # email和username是否存在
     # url(r'^', include(router.urls)),
 ]
 

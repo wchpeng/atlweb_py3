@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+{#    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>#}
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
     <style>
         /* 清除浮动 */
         .clearfix:after,.clearfix:before{ content: "";display: table;}
@@ -132,19 +133,29 @@
                 var ret = $(this).val();
                 var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
                 if (reg.test(ret) == true || ret == ""){
+                    $(this).removeClass("input-background");
+                    $register_email_tips.hide();
                     if (ret != ""){
                         valid_register_email = true;
                     } else {
                         valid_register_email = false;
+                        return
                     }
 
-                    $(this).removeClass("input-background");
-                    $register_email_tips.hide();
                 } else {
                     valid_register_email = false;
                     $(this).addClass("input-background");
+                    $register_email_tips.text("! 邮箱格式错误");
                     $register_email_tips.show();
+                    return
                 }
+                $.get("/uauth/exist-username-email/", {"email": ret}, function(data){
+                    if (data.error){
+                        valid_register_email = false;
+                        $register_name_tips.text("！ email已存在！");
+                        $register_name_tips.show();
+                    }
+                });
             });
 
             $register_name.blur(function(){
@@ -154,22 +165,33 @@
                 if (ret.length >= 8 || ret == ""){
                     if (reg.test(ret) == true || ret == ""){
                         if (ret != ""){
+                        $(this).removeClass("input-background");
+                        $register_name_tips.hide();
                             valid_register_name = true;
                         } else {
                             valid_register_name = false;
+                            return
                         }
-                        $(this).removeClass("input-background");
-                        $register_name_tips.hide();
                     } else {
                         $(this).addClass("input-background");
                         $register_name_tips.show();
                         valid_register_name = false;
+                        return
                     }
                 } else {
                     valid_register_name = false;
                     $(this).addClass("input-background");
+                    $register_name_tips.text("! 用户名不规范，应大于8个字符，由数字/字母/下划线组成");
                     $register_name_tips.show();
+                    return
                 }
+                $.get("/uauth/exist-username-email/", {"username": ret}, function(data){
+                    if (data.error){
+                        valid_register_name = false;
+                        $register_name_tips.text("！ 用户名已存在！");
+                        $register_name_tips.show();
+                    }
+                });
             });
 
             $login_name.blur(function(){
@@ -306,6 +328,9 @@
             <div id="login-form">
                 <div style="font-size:35px;margin-bottom:33px;">欢迎登录ponk</div>
                 <div style="font-size:20px;margin-bottom:60px;">分享，你我更亲近。</div>
+                {% if error %}
+                    <div style="color:red;margin-bottom:10px;margin-top:-10px;">! {{ detail }}</div>
+                {% endif %}
                 <form action="/uauth/login/" method="post" id="login">
                     <div class="input-content">
                         <input type="text" class="auto-input" name="username" id="login-name" placeholder="昵称或Email">
