@@ -5,6 +5,7 @@ from django_filters import rest_framework
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.http.response import JsonResponse
+from django.views.decorators.http import require_POST, require_GET
 from datetime import datetime
 
 from uauth.models import UserInfo
@@ -81,29 +82,44 @@ def index1(request):
     # return render(request, "image/index.html", {"data": data, "now": now})
 
 
+@require_POST
 def upload_pic(request):
     """上传图片"""
     pic = request.FILES["picture"]
     album_id = request.POST.get("album", "")
     brief = request.POST.get("brief", "")
-    album = Album.objects.get(id=album_id)
     path = request.POST.get("current_path", "")
 
+    # 如果只是上传图片
     if not album_id:
-        return JsonResponse({"detail": "id缺失"})
+        name = datetime.now().strftime("%y%m%d-%H:%M:%S")
 
-    with transaction.atomic():
         pic = handle_upload_pic(pic)
-        p = Picture(
+        p = Picture.objects.create(
             brief=brief,
             picture=pic,
             user=request.user
         )
-        p.save()
+        album = Album.objects.create(
+            name=name,
+            category=2,
+            brief=brief,
+            user=request.user
+        )
         album.pictures.add(p)
-        # return
         return redirect(path)
-    # return JsonResponse({"detail": "error"})
+
+    # 如果是上传图片到相册
+    album = Album.objects.get(id=album_id)
+    with transaction.atomic():
+        pic = handle_upload_pic(pic)
+        p = Picture.objects.create(
+            brief=brief,
+            picture=pic,
+            user=request.user
+        )
+        album.pictures.add(p)
+        return redirect(path)
 
 
 def album_detail_page(request, username, album_id):

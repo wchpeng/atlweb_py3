@@ -34,7 +34,7 @@
     <!-- // 添加图片界面 -->
     <div id="add-pic-gui" class="container">
         <div class="row">
-            <div class="col-sm-10 col-sm-offset-1 col-lg-8 col-lg-offset-2">
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <div class="upload-content">
                     <form action="/image/upload-pic/" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -51,8 +51,7 @@
                                     {% endif %}
                                 {% empty %}
                                 {% endfor %}
-{#                                <option value="2" selected="selected">相册2</option>#}
-{#                                <option value="3">相册3</option>#}
+
                             </select>
                         </div>
                         <div class="upload-input1">

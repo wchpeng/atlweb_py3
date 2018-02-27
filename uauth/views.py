@@ -16,7 +16,7 @@ from uauth.tasks import send_email
 from uauth.models import UserInfo, create_user
 from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
 from utils.permissions import IsOwnerRetrieveUpdate
-from image.models import get_albums_data_info, get_favorite_albums_data_info, get_albums_count
+from image.models import get_albums_data_info, get_favorite_albums_data_info, get_albums_count, Album
 from social.models import followed_count, follow_count
 
 
@@ -134,13 +134,17 @@ def my_info_page(request):
     user_info["followed"] = followed_count(user.id)
     user_info["albums_count"] = get_albums_count(user.id)
 
+    qs = Album.objects.filter(user=user).only("id", "name")
+    current_path = request.get_full_path()
     albums_data = get_albums_data_info(user=user)
     fav_albums_data = get_favorite_albums_data_info(user.id)
 
     ret = {
+        "qs": qs,
         "owner": True,
         "user_info": user_info,
         "albums_data": albums_data,
+        "current_path": current_path,
         "fav_albums_data": fav_albums_data
     }
 
