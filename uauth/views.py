@@ -9,12 +9,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login, authenticate, models
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework import parsers, permissions
 from rest_framework import mixins, generics, permissions, viewsets, filters
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 
 from uauth.tasks import send_email
 from uauth.models import UserInfo, create_user
 from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
+from utils.image_utils import handle_upload_pic
 from utils.permissions import IsOwnerRetrieveUpdate
 from image.models import get_albums_data_info, get_favorite_albums_data_info, get_albums_count, Album
 from social.models import followed_count, follow_count
@@ -155,7 +157,8 @@ def my_info_page(request):
 @login_required(login_url="/uauth/login/")
 def his_info_page(request, username):
     user = UserInfo.objects.get(username=username).user
-    # user = models.User.objects.get(id=user_id)
+    if user == request.user:
+        return redirect("/uauth/my-info-page/")
     user_info = UserInfo.objects.filter(user=user).values("user_id", "signature", "username", "avatar")[0]
     user_info["follow"] = follow_count(user.id)
     user_info["followed"] = followed_count(user.id)
@@ -171,5 +174,27 @@ def his_info_page(request, username):
         # "fav_albums_data": fav_albums_data
     }
 
-    # return render(request, "uauth/user_info.html", ret)
-    return JsonResponse(ret)
+    return render(request, "uauth/user_info.html", ret)
+    # return JsonResponse(ret)
+
+
+pic_mime2type = {
+    "image/gif": "gif",
+    "image/png": "png",
+    "image/jpeg": "jpg"
+}
+
+
+@api_view(["POST"])
+@parser_classes((parsers.MultiPartParser,))
+@permission_classes((permissions.IsAuthenticated,))
+def upload_avatar(request):
+    """上传头像"""
+    pic = request.Files.get("avatar", "")
+    if pic == "" or pic.content_type not in pic_mime2type:
+        return {"detail": "格式不正确."}
+
+    pic = handle_upload_pic(pic)
+    request.user.userinfo.avatar = pic
+    request.user.userinfo.save()
+    return redirect("/uauth/my-info-page/")

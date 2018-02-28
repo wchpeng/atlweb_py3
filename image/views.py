@@ -86,8 +86,8 @@ def index1(request):
 def upload_pic(request):
     """上传图片"""
     pic = request.FILES["picture"]
-    album_id = request.POST.get("album", "")
     brief = request.POST.get("brief", "")
+    album_id = request.POST.get("album", "")
     path = request.POST.get("current_path", "")
 
     # 如果只是上传图片
@@ -128,15 +128,16 @@ def album_detail_page(request, username, album_id):
     album = Album.objects.get(id=album_id)
     qs = Album.objects.filter(user=user).only("id", "name")
     path = request.get_full_path()
-    if user.id == request.user.id:
+    if user == request.user:
         owner = True
     else:
         owner = False
 
     ret = {
         "qs": qs,
-        "current_path": path,
         "owner": owner,
+        "current_path": path,
+        "username": username,
         "current_album": album,
         "album_pictures": album.pictures.all()
     }
