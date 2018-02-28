@@ -19,6 +19,7 @@ urlpatterns = [
     url(r"^my-info-page/$", views.my_info_page),                  # 我的信息页
     url(r"^his-info-page/(.+?)/$", views.his_info_page),          # 别人的信息页
     url(r"^exist-username-email/$", views.exist_username_email),  # email和username是否存在
+    url(r"^mod-userinfo/$", views.mod_userinfo),                  # 修改个人信息
     # url(r'^', include(router.urls)),
 ]
 

@@ -3,6 +3,7 @@ import json
 
 from django.contrib import messages
 from django.db import IntegrityError
+from django.forms import model_to_dict
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -14,6 +15,7 @@ from rest_framework import mixins, generics, permissions, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 
 from uauth.tasks import send_email
+from uauth.forms import UserInfoForm
 from uauth.models import UserInfo, create_user
 from uauth.serializers import UserInfoDetailSerializer, UserInfoListSerializer, UserInfoRetrieveSerializer
 from utils.image_utils import handle_upload_pic
@@ -185,16 +187,44 @@ pic_mime2type = {
 }
 
 
-@api_view(["POST"])
-@parser_classes((parsers.MultiPartParser,))
-@permission_classes((permissions.IsAuthenticated,))
-def upload_avatar(request):
-    """上传头像"""
-    pic = request.Files.get("avatar", "")
-    if pic == "" or pic.content_type not in pic_mime2type:
-        return {"detail": "格式不正确."}
+# @api_view(["POST"])
+# @parser_classes((parsers.MultiPartParser,))
+# @permission_classes((permissions.IsAuthenticated,))
+# def upload_avatar(request):
+#     """上传头像"""
+#     pic = request.Files.get("avatar", "")
+#     if pic == "" or pic.content_type not in pic_mime2type:
+#         return {"detail": "格式不正确."}
+#     pic = handle_upload_pic(pic)
+#     request.user.userinfo.avatar = pic
+#     request.user.userinfo.save()
+#     return redirect("/uauth/my-info-page/")
 
-    pic = handle_upload_pic(pic)
-    request.user.userinfo.avatar = pic
-    request.user.userinfo.save()
-    return redirect("/uauth/my-info-page/")
+
+@require_http_methods(["GET", "POST"])
+@login_required(login_url="/uauth/login/")
+def mod_userinfo(request):
+    """修改个人信息"""
+    user_info = request.user.userinfo
+    user_dict = model_to_dict(user_info)
+
+    if request.method == "GET":
+        form = UserInfoForm(data=user_dict)
+        return render(request, "uauth/mod_userinfo.html", {"form": form})
+    else:
+        form = UserInfoForm(data=request.POST, instance=user_info)
+        if form.is_valid():
+            # 保存图片
+            pic = request.FILES.get("avatar", "")
+            if pic == "" or pic.content_type not in pic_mime2type or pic.size > 2*1024*1024:
+                return {"detail": "格式不正确或图片太大."}
+            pic = handle_upload_pic(pic)
+            request.user.userinfo.avatar = pic
+            request.user.userinfo.save()
+
+            # 保存信息
+            form.save()
+            return redirect("/uauth/my-info-page/")
+        else:
+            messages.add_message(request, messages.ERROR, form.errors.as_text())
+            return render(request, "uauth/mod_userinfo.html", {"form": form})

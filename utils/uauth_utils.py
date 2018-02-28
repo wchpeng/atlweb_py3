@@ -14,7 +14,7 @@ def get_user_hash(val):
 
 def avatar_upload_path(instance, filename):
     suffix = filename[filename.rfind("."):]
-    return "{}/{}{}".format(instance.userinfo.user_hash, get_user_hash(filename), suffix)
+    return "{}/{}{}".format(instance.user_hash, get_user_hash(filename), suffix)
 
 
 

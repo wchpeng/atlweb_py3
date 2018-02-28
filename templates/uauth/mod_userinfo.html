@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block title %}修改信息{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <form action="/uauth/mod-userinfo/" enctype="multipart/form-data" method="post">
+            <h2 class="text-center text-primary">修改个人信息</h2>
+            <div style="height:40px;"></div>
+{#            {% bootstrap_messages %}#}
+
+            {% bootstrap_form form layout="horizontal" form_group_class="form-group form-horizontal" horizontal_label_class="col-sm-3 text-right" horizontal_field_class="form-group col-sm-7" %}
+
+            {% buttons %}
+                <button class="btn col-sm-3 col-sm-offset-3 btn-primary">提交</button>
+            {% endbuttons %}
+        </form>
+    </div>
+{% endblock %}

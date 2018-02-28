@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'django_filters',
+    'bootstrap3',
     'ckeditor',
     'ckeditor_uploader',
     'uauth',

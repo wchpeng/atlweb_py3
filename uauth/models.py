@@ -13,7 +13,7 @@ class UserInfo(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.BooleanField(default=1, verbose_name="性别")
     im_token = models.CharField(max_length=255, null=True, blank=True)
-    birthday = models.DateTimeField(verbose_name="生日", null=True, blank=True)
+    birthday = models.DateField(verbose_name="生日", null=True, blank=True)
     mark = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="评分")
     mobile = models.CharField(max_length=11, null=True, blank=True, verbose_name="电话")
     address = models.CharField(max_length=50, null=True, blank=True, verbose_name="地址")
