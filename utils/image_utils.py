@@ -41,8 +41,6 @@ def handle_upload_pic(pic):
     """处理上传的图片，使他成为一个正方形"""
     im_pic = Image.open(pic)
     w, h = im_pic.size
-    if w == h:
-        return Image
     if w > h:
         w_start = (w-h)*0.618
         box = (w_start, 0, w_start+h, h)
@@ -54,7 +52,9 @@ def handle_upload_pic(pic):
 
     # 放大到350*350
     if region.size[0] < 350:
-        region.thumbnail((350, 350))
+        region = region.resize((350, 350))
+    if region.size[0] > 850:
+        region.thumbnail((850, 850))
 
     region_io = BytesIO()
     region.save(region_io, format=im_pic.format)
