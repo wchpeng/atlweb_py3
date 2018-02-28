@@ -228,3 +228,67 @@ def mod_userinfo(request):
         else:
             messages.add_message(request, messages.ERROR, form.errors.as_text())
             return render(request, "uauth/mod_userinfo.html", {"form": form})
+
+
+import xlsxwriter
+from django.http import FileResponse
+import os
+
+
+def get_excel_userinfo(request):
+    all_user_info = UserInfo.objects.all()
+    all_dict = list(map(lambda x: model_to_dict(x, exclude=["avatar"]), all_user_info))
+    print(type(all_dict))
+
+    name = "./excel/userinfos.xlsx"
+    if os.path.isfile(name):
+        workbook = xlsxwriter.Workbook(name)
+        worksheet = workbook.add_worksheet("EXCEL-1")
+
+        row, col = 0, 0
+        key_s = list(all_dict[0].keys())
+        print(key_s)
+        key_s.sort()
+        # 写头部
+        for i in key_s:
+            worksheet.write(row, col, i)
+            col += 1
+        # 写内容
+        row, col = 1, 0
+        for temp in all_dict:
+            print(temp)
+            for k in key_s:
+                worksheet.write(row, col, temp[k])
+                col += 1
+            row += 1
+            col = 0
+    file = open(name, "rb")
+    res = FileResponse(file)
+    res["Content-Type"] = "application/octet-stream"
+    res["Content-Disposition"] = 'filename="' + name[7:] + '"'
+    print(file)
+    # return JsonResponse(all_dict, safe=False)
+    return res
+
+    # if os.path.isfile(name):
+    # workbook = xlsxwriter.Workbook(name)
+    # worksheet = workbook.add_worksheet("EXCEL-1")
+    #
+    # row, col = 0, 0
+    # key_s = list(all_dict[0].keys())
+    # print(key_s)
+    # key_s.sort()
+    # # 写头部
+    # for i in key_s:
+    #     worksheet.write(row, col, i)
+    #     col += 1
+    # # 写内容
+    # row, col = 1, 0
+    # for temp in all_dict:
+    #     print(temp)
+    #     for k in key_s:
+    #         worksheet.write(row, col, temp[k])
+    #         col += 1
+    #     row += 1
+    #     col = 0
+
