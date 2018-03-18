@@ -2,14 +2,178 @@
 {% load bootstrap3 %}
 {% block title %}修改信息{% endblock %}
 
+{% block head-js %}
+    <script src="/static/js/jquery.Jcrop.min.js"></script>
+    <script>
+        $(function () {
+            function render_jcrop(){
+                // Create variables (in this scope) to hold the API and image size
+                var jcrop_api,
+                    boundx,
+                    boundy,
+
+                    // Grab some information about the preview pane
+                    $preview = $('#preview-pane'),
+                    $pcnt = $('#preview-pane .preview-container'),
+                    $pimg = $('#preview-pane .preview-container img'),
+
+                    xsize = $pcnt.width(),
+                    ysize = $pcnt.height();
+
+                console.log('init', [xsize, ysize]);
+                $('#target').Jcrop({
+                    onChange: updatePreview,
+                    onSelect: updatePreview,
+                    aspectRatio: 1
+                }, function () {
+                    // Use the API to get the real image size
+                    var bounds = this.getBounds();
+                    boundx = bounds[0];
+                    boundy = bounds[1];
+                    // Store the API in the jcrop_api variable
+                    jcrop_api = this;
+
+                    // Move the preview into the jcrop container for css positioning
+                    $preview.appendTo(jcrop_api.ui.holder);
+
+                    var target = document.getElementById("target");
+                    var target_w = target.width;
+                    var target_h = target.height;
+
+                    if (boundx > boundy) {
+                        draw_thumbnail(target, (target_w - target_h) / 2, 0, target_h, target_h, 0, 0, 200, 200);
+                    } else {
+                        draw_thumbnail(target, 0, (target_h - target_w) / 2, target_w, target_w, 0, 0, 200, 200);
+                    }
+                });
+
+                function updatePreview(c) {
+                    if (parseInt(c.w) > 0) {
+                        // c.w/c.h是选框选中的区域宽高, c.x/c.y是选中区域初始x/y轴值
+                        id_img = document.getElementById("target");
+                        n_c_x = id_img.naturalWidth / boundx * c.x;
+                        n_c_w = id_img.naturalWidth / boundx * c.w;
+                        n_c_y = id_img.naturalHeight / boundy * c.y;
+                        n_c_h = id_img.naturalHeight / boundy * c.h;
+                        draw_thumbnail(id_img, n_c_x, n_c_y, n_c_w, n_c_h, 0, 0, 200, 200);
+                    }
+                }
+
+                // 画图像到canvas上
+                function draw_thumbnail(img, x, y, width, height, d_x, d_y, d_w, d_h) {
+                    var ctx = document.getElementById("mycanvas").getContext("2d");
+                    ctx.drawImage(img, x, y, width, height, d_x, d_y, d_w, d_h);
+                }
+
+            }
+
+            function add_render_template(url){
+                $template = $('<div id="select-pic" class="container">\
+                    <div class="row">\
+                        <div class="span12 col-sm-offset-2">\
+                            <div class="jc-demo-box">\
+                                <img src="' + url + '" id="target" alt="[Jcrop Example]" />\
+                                <div id="preview-pane">\
+                                    <div class="preview-container">\
+                                        <canvas id="mycanvas" width="200" height="200"></canvas>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>');
+                $("#select-pic").append($template);
+            }
+
+            function clear_old_template(){
+                $("#select-pic").empty();
+            }
+
+            var $select_pic = $("input[name=avatar]");
+            var $target = $("#target");
+            var target = document.getElementById("target");
+{#            var $jcrop_container = $("#select-pic");#}
+            var n_c_x, n_c_y, n_c_w, n_c_h;
+            var forms_input_file = document.getElementsByName("avatar");
+
+            // render_jcrop();
+
+            forms_input_file[0].addEventListener("change", function (e) {
+                var files = this.files;
+                var reader = new FileReader();
+                reader.readAsDataURL(files[0]);
+                reader.onload = function (e) {
+                    var dx = (e.total / 1024) / 1024;
+                    if (dx >= 2) {
+                        alert("文件大小大于2M");
+                        return;
+                    }
+
+                    clear_old_template();
+                    add_render_template(this.result);
+                    render_jcrop();
+                }
+            });
+
+            $("#info-form").submit(function(){
+                alert("submit...");
+                console.log($("form input[name=cut_size]").length);
+                $("form input[name=cut_size]").val(n_c_x+"/"+n_c_y+"/"+n_c_w+"/"+n_c_h);
+                return true;
+            });
+        })
+    </script>
+{% endblock head-js %}
+
+{% block head-css %}
+    <link rel="stylesheet" href="/static/css/jquery.Jcrop.css">
+    <style>
+        .jcrop-holder #preview-pane {
+            display: block;
+            position: absolute;
+            z-index: 2000;
+            top: 10px;
+            right: -250px;
+            padding: 6px;
+            border: 1px rgba(0, 0, 0, .4) solid;
+            background-color: white;
+
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px;
+            border-radius: 6px;
+
+            -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+        }
+        #preview-pane .preview-container {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+        }
+        #target {
+            max-width: 600px;
+            max-height: 600px;
+        }
+        #select-pic{
+            margin-bottom: 30px;
+            padding-top:120px;
+            /* border: 1px solid black; */
+            /* display: none; */
+        }
+    </style>
+{% endblock head-css %}
+
 {% block body %}
     <div class="container">
-        <form action="/uauth/mod-userinfo/" enctype="multipart/form-data" method="post">
+        <form action="/uauth/mod-userinfo/" id="info-form" enctype="multipart/form-data" method="post">
             <h2 class="text-center text-primary">修改个人信息</h2>
             <div style="height:40px;"></div>
 {#            {% bootstrap_messages %}#}
 
             {% bootstrap_form form layout="horizontal" form_group_class="form-group form-horizontal" horizontal_label_class="col-sm-3 text-right" horizontal_field_class="form-group col-sm-7" %}
+
+            <div id="select-pic" class="container"></div> <input type="hidden" name="cut_size" value="">
 
             {% buttons %}
                 <button class="btn col-sm-3 col-sm-offset-3 btn-primary">提交</button>

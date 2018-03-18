@@ -20,6 +20,7 @@ from django.views.static import serve
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
+from .settings import DEBUG
 from .settings import MEDIA_ROOT
 
 schema_view = get_schema_view(title="api docs", url="127.0.0.1:8000/uauth/login/", renderer_classes=(SwaggerUIRenderer, OpenAPIRenderer))
@@ -37,3 +38,7 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('social/', include('social.urls')),
 ]
+
+if DEBUG:
+    import debug_toolbar
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]

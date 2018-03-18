@@ -37,16 +37,22 @@ def mod_dict_key(data):
             del temp["album__add_date"]
 
 
-def handle_upload_pic(pic):
+def handle_upload_pic(pic, x="", y="", w="", h=""):
     """处理上传的图片，使他成为一个正方形"""
     im_pic = Image.open(pic)
+    box = (x, y, w, h)
+
+    if all(box):
+        box = (int(x), int(y), int(w), int(h))
+        im_pic = im_pic.crop(box)
+
     w, h = im_pic.size
     if w > h:
-        w_start = (w-h)*0.618
+        w_start = (w-h)*0.5
         box = (w_start, 0, w_start+h, h)
         region = im_pic.crop(box)
     else:
-        h_start = (h-w)*0.618
+        h_start = (h-w)*0.5
         box = (0, h_start, w, h_start+w)
         region = im_pic.crop(box)
 

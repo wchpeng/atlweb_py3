@@ -218,7 +218,14 @@ def mod_userinfo(request):
             pic = request.FILES.get("avatar", "")
             if pic == "" or pic.content_type not in pic_mime2type or pic.size > 2*1024*1024:
                 return {"detail": "格式不正确或图片太大."}
-            pic = handle_upload_pic(pic)
+
+            c_s = request.POST.get("cut_size", "")
+            if c_s:
+                kwargs = {"x": c_s[0], "y": c_s[1], "w": c_s[2], "h": c_s[3]}
+                pic = handle_upload_pic(pic, **kwargs)
+            else:
+                pic = handle_upload_pic(pic)
+
             request.user.userinfo.avatar = pic
             request.user.userinfo.save()
 
@@ -232,8 +239,7 @@ def mod_userinfo(request):
 
 import xlsxwriter
 from django.http import FileResponse, HttpResponse
-import os
-from io import BytesIO, BufferedReader
+from io import BytesIO
 
 
 def get_excel_userinfo(request):
