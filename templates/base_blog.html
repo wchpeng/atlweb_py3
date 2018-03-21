@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block head-css %}
+{% endblock head-css %}
+{% block head-js %}{% endblock head-js %}
+
+{% block other %}
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css.map">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/my_blog.css">
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+    </style>
+{% endblock other %}
+
+{% block body %}
+
+    {% block body-header %}
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                        aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">论文</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+                    {% block toggle-nav-active %}
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="/community/blog/all-blog/">首页
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a href="/community/blog/my-blog/">论文</a>
+                            </li>
+                        </ul>
+                    {% endblock toggle-nav-active %}
+
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+    {% endblock body-header %}
+
+    {% block body-content %}{% endblock body-content %}
+
+{% endblock body %}
+
+{% block body-bottom %}
+{% endblock body-bottom %}

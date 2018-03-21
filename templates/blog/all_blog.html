@@ -1,0 +1,86 @@
+{% extends 'base_blog.html' %}
+
+{% block toggle-nav-active %}
+    <ul class="nav navbar-nav">
+        <li class="active">
+            <a href="/community/blog/all-blog/">首页
+                <span class="sr-only">(current)</span>
+            </a>
+        </li>
+        <li>
+            <a href="/community/blog/my-blog/">论文</a>
+        </li>
+    </ul>
+{% endblock toggle-nav-active %}
+
+{% block body-content %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-9">
+                <div class="list-group">
+                    <!-- 标题 -->
+                    <li href="" class="list-group-item active">论文</li>
+
+                    <!-- 内容 -->
+                    {% for blog in blogs %}
+                        <li href="" class="list-group-item">
+                            <a class="list-group-item-heading blog-title-a" href="/community/blog/blog-detail/{{ blog.id }}/">{{ blog.title }}</a>
+                            <p class="list-group-item-text">
+                                <div>
+                                    <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+                                    <a href="/community/blog/blog-category/{{ blog.category.id }}/">{{ blog.category.name }}</a>
+                                    <span class="glyphicon glyphicon-time"></span>
+                                    {{ blog.add_date|date:"Y-m-d H:i:s" }}
+                                </div>
+                                {{ blog.content|striptags|truncatechars:100 }}
+                            </p>
+                        </li>
+                    {% endfor %}
+
+                </div>
+                <!-- 分页 -->
+                <nav aria-label="Page navigation my-pagination" class="text-center">
+                    <ul class="pagination">
+                        <li>
+                            <a href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        {% for page in blog_pages %}
+                            {% if blogs.number == page %}
+                                <li class="active">
+                            {% else %}
+                                <li>
+                            {% endif %}
+                                <a href="/community/blog/all-blog/?page={{ page }}">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+
+                        <li>
+                            <a href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="col-md-3">
+                <div class="list-group">
+                    <li href="" class="list-group-item active">分类</li>
+
+                    {% for category in all_category %}
+                    <a href="/community/blog/blog-category/{{ category.id }}/" class="list-group-item list-group-item-{{ random_class|random }}">
+                        <span class="badge">{{ category.blog_nums }}</span>
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body-content %}
+

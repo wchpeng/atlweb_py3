@@ -8,17 +8,31 @@ from db.base_model import BaseModel
 from image.models import Album, Picture
 
 
+class BlogCategory(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=16)
+
+    def __str__(self):
+        return "{} {}".format(self.id, self.name)
+
+    class Meta:
+        verbose_name_plural = "论文分类"
+
+
 class Blog(BaseModel):
     """blog"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=32)
     content = RichTextUploadingField()
+    category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE, null=True)
+    read_count = models.PositiveIntegerField(default=0, verbose_name="阅读数")
 
     def __str__(self):
         return "{} {}".format(self.id, self.title[:10])
 
     class Meta:
         ordering = ("-id",)
+        verbose_name_plural = "论文"
 
 
 class Review(BaseModel):

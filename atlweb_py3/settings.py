@@ -178,6 +178,21 @@ MEDIAFILE_DIRS = (os.path.join(BASE_DIR, 'media'))
 
 # 富文本编辑器配置图片保存路径
 CKEDITOR_UPLOAD_PATH = "ckeditor/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        # 'toolbar': 'Custom',
+        # 'toolbar_Custom': [
+        #     ['Bold', 'Italic', 'Underline'],
+        #     ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter',
+        #      'JustifyRight', 'JustifyBlock'],
+        #     ['Link', 'Unlink'],
+        #     ['RemoveFormat', 'Source']
+        # ],
+        'height': 800,
+        'width': 1000
+    },
+}
 
 # 配置rest-framework
 REST_FRAMEWORK = {
@@ -204,3 +219,6 @@ EMAIL_FROM = '猴赛雷<smartwu_sir@163.com>'
 # 融云 develop环境
 rong_app_key = "kj7swf8okiwu2"
 rong_app_secret = "LgNetpgObK2rYz"
+
+# 一些环境配置
+BLOG_PER_PAGE = 12

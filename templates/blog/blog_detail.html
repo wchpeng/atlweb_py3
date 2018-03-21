@@ -1,0 +1,22 @@
+{% extends 'base_blog.html' %}
+
+{% block body-content %}
+    <div class="container">
+        <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading">{{ blog.title }}</div>
+            <!-- List group -->
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-success">作者：<a href="/community/blog/his-blog/{{ blog.user.id }}">{{ blog.user.userinfo.username }}</a></li>
+                <li class="list-group-item list-group-item-info">标签：<a href="/community/blog/blog-category/{{ blog.category.id }}/">{{ blog.category.name }}</a></li>
+                <li class="list-group-item list-group-item-danger">创作时间：{{ blog.add_date|date:"Y-m-d" }}</li>
+            </ul>
+            <div class="panel-body">
+                <div>
+                    {{ blog.content|safe }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock body-content %}

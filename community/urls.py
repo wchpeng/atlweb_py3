@@ -1,4 +1,5 @@
 from rest_framework import routers
+from django.conf.urls import url
 
 from community import views
 
@@ -10,5 +11,12 @@ router.register(r"mod-review", views.ReviewUpdateView)
 router.register(r"reviews", views.ReviewListView)
 router.register(r"review", views.ReviewCreateRetrieveView)
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^blog/all-blog/$', views.all_blog),                     # all blog
+    url(r'^blog/my-blog/$', views.my_blog),                       # my blog
+    url(r'^blog/his-blog/(\d+)/$', views.his_blog),               # his blog
+    url(r'^blog/blog-category/(\d+)/$', views.blog_category),     # category blog
+    url(r'^blog/blog-detail/(\d+)/$', views.blog_detail),         # blog detail
+]
+
 urlpatterns += router.urls
