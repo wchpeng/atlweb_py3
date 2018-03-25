@@ -230,10 +230,12 @@
 
             $register.submit(function(){
                 if (valid_register_email == false || valid_register_name == false){
-                    return false;
+{#                    return false;#}
+                    return true;
                 }
                 if ($login_pwd.val() == ""){
-                    return false;
+{#                    return false;#}
+                    return true;
                 }
             });
 

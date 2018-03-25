@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from community.models import Reply, Review
+from community.models import Reply, Review, Blog
+from community.utils import ridding_html_tag
 
 
 class ReplyDetailSerializer(serializers.ModelSerializer):
@@ -45,3 +46,27 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class BlogDetailSerializer(serializers.ModelSerializer):
+    """blog detail"""
+    def to_representation(self, instance):
+        ret = super(BlogDetailSerializer, self).to_representation(instance)
+        ret["username"] = instance.user.userinfo.username
+        return ret
+
+    class Meta:
+        model = Blog
+        fields = ("title", "content", "add_date")
+
+
+class BlogListSerializer(serializers.ModelSerializer):
+    """blog list"""
+    def to_representation(self, instance):
+        ret = super(BlogListSerializer, self).to_representation(instance)
+        ret["content"] = ridding_html_tag(ret["content"], 50)
+        ret["liked_count"] = instance.liked_count
+        ret["reviewed_count"] = 5
+        return ret
+
+    class Meta:
+        model = Blog
+        fields = ("id", "title", "content")

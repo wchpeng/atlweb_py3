@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from rest_framework import permissions, mixins, generics, viewsets, filters, pagination
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django_filters import rest_framework
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 
 from community import serializers, models
-from community.utils import select_page_range
+from community.utils import select_page_range, whether_like
 from utils.pagination import MyPagination
 from utils.permissions import IsOwnerRetrieveUpdate, IsOwnerOrTopLevelUpdate
 
@@ -79,6 +82,7 @@ def all_blog(request):
     return render(request, "blog/all_blog.html", ret)
 
 
+@login_required(login_url="/uauth/login/")
 def my_blog(request):
     """我的blogs页"""
     page = int(request.GET.get("page", "1"))
@@ -152,9 +156,34 @@ def blog_category(request, category_id):
 def blog_detail(request, blog_id):
     """blog detail"""
     blog = models.Blog.objects.get(id=blog_id)
+    blog.read_count += 1
+    blog.save()
 
     ret = {
         "blog": blog,
     }
 
     return render(request, "blog/blog_detail.html", ret)
+
+
+@api_view(["GET"])
+def blog_detail_json(request, blog_id):
+    """blog detail"""
+    blog = models.Blog.objects.get(id=blog_id)
+    blog.read_count += 1
+    blog.save()
+    data = serializers.BlogDetailSerializer(blog).data
+
+    return Response(data)
+
+
+@api_view(["GET"])
+def blog_list_json(request):
+    blogs = models.Blog.objects.filter(visible=True)\
+        .annotate(liked_count=Count('likeblog'))\
+        .order_by("-liked_count", "-add_date")
+    data = serializers.BlogListSerializer(blogs, many=True).data
+    whether_like(user=request.user, data=data)
+
+    return Response(data)
+
